@@ -86,6 +86,35 @@ paths:
             "*/*":
               schema:
                 type: object
+  "/report/{boardId}/users/{memEmail}":
+    post:
+      tags:
+      - report-controller
+      operationId: reportBoard
+      parameters:
+      - name: boardId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: memEmail
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: reason
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: string
   "/register":
     post:
       tags:
@@ -150,6 +179,100 @@ paths:
                 type: object
                 additionalProperties:
                   type: object
+  "/like/{boardId}/users/{memEmail}":
+    post:
+      tags:
+      - like-controller
+      operationId: addLike
+      parameters:
+      - name: boardId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: memEmail
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: string
+    delete:
+      tags:
+      - like-controller
+      operationId: removeLike
+      parameters:
+      - name: boardId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: memEmail
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: string
+  "/dislike/{boardId}/users/{memEmail}":
+    post:
+      tags:
+      - dis-like-controller
+      operationId: addDisLike
+      parameters:
+      - name: boardId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: memEmail
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: string
+    delete:
+      tags:
+      - dis-like-controller
+      operationId: removeDisLike
+      parameters:
+      - name: boardId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: memEmail
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: string
   "/comment/{boardId}/{memEmail}":
     post:
       tags:
@@ -180,6 +303,53 @@ paths:
             "*/*":
               schema:
                 "$ref": "#/components/schemas/CommentDto"
+  "/bookmark/{boardId}/users/{memEmail}":
+    post:
+      tags:
+      - bookmark-controller
+      operationId: addBookmark
+      parameters:
+      - name: boardId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: memEmail
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: string
+    delete:
+      tags:
+      - bookmark-controller
+      operationId: removeBookmark
+      parameters:
+      - name: boardId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: memEmail
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: string
   "/boards/create":
     post:
       tags:
@@ -386,6 +556,26 @@ paths:
             "*/*":
               schema:
                 "$ref": "#/components/schemas/Movie"
+  "/like/{boardId}/count":
+    get:
+      tags:
+      - like-controller
+      operationId: getLikeCount
+      parameters:
+      - name: boardId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: integer
+                format: int32
   "/get_topmovies":
     get:
       tags:
@@ -439,6 +629,26 @@ paths:
             "*/*":
               schema:
                 "$ref": "#/components/schemas/Drama"
+  "/dislike/{boardId}/count":
+    get:
+      tags:
+      - dis-like-controller
+      operationId: getDisLikeCount
+      parameters:
+      - name: boardId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: integer
+                format: int32
   "/comment/all/board/{boardId}":
     get:
       tags:
@@ -520,6 +730,26 @@ paths:
             "*/*":
               schema:
                 type: boolean
+  "/bookmark/{boardId}/count":
+    get:
+      tags:
+      - bookmark-controller
+      operationId: getBookmarkCount
+      parameters:
+      - name: boardId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: integer
+                format: int32
   "/boards":
     get:
       tags:
@@ -1283,22 +1513,22 @@ components:
           type: string
         displayName:
           type: string
-        autowireCapableBeanFactory:
-          "$ref": "#/components/schemas/AutowireCapableBeanFactory"
         applicationName:
           type: string
         startupDate:
           type: integer
           format: int64
+        autowireCapableBeanFactory:
+          "$ref": "#/components/schemas/AutowireCapableBeanFactory"
         environment:
           "$ref": "#/components/schemas/Environment"
+        beanDefinitionCount:
+          type: integer
+          format: int32
         beanDefinitionNames:
           type: array
           items:
             type: string
-        beanDefinitionCount:
-          type: integer
-          format: int32
         parentBeanFactory:
           "$ref": "#/components/schemas/BeanFactory"
         classLoader:
@@ -1533,11 +1763,11 @@ components:
     FilterRegistration:
       type: object
       properties:
-        urlPatternMappings:
+        servletNameMappings:
           type: array
           items:
             type: string
-        servletNameMappings:
+        urlPatternMappings:
           type: array
           items:
             type: string
@@ -1556,9 +1786,9 @@ components:
           type: boolean
         is2xxSuccessful:
           type: boolean
-        is4xxClientError:
-          type: boolean
         is5xxServerError:
+          type: boolean
+        is4xxClientError:
           type: boolean
         is3xxRedirection:
           type: boolean
@@ -1580,35 +1810,35 @@ components:
       properties:
         buffer:
           type: string
+        elIgnored:
+          type: string
+        pageEncoding:
+          type: string
+        includePreludes:
+          type: array
+          items:
+            type: string
+        includeCodas:
+          type: array
+          items:
+            type: string
+        isXml:
+          type: string
         defaultContentType:
           type: string
         urlPatterns:
           type: array
           items:
             type: string
-        includePreludes:
-          type: array
-          items:
-            type: string
-        elIgnored:
-          type: string
-        pageEncoding:
-          type: string
-        isXml:
-          type: string
-        includeCodas:
-          type: array
-          items:
-            type: string
-        trimDirectiveWhitespaces:
-          type: string
-        errorOnUndeclaredNamespace:
+        errorOnELNotFound:
           type: string
         scriptingInvalid:
           type: string
         deferredSyntaxAllowedAsLiteral:
           type: string
-        errorOnELNotFound:
+        errorOnUndeclaredNamespace:
+          type: string
+        trimDirectiveWhitespaces:
           type: string
     RedirectView:
       type: object
@@ -1729,14 +1959,14 @@ components:
           format: int32
         attributeNames:
           type: object
-        contextPath:
-          type: string
         initParameterNames:
           type: object
-        virtualServerName:
+        contextPath:
           type: string
         sessionCookieConfig:
           "$ref": "#/components/schemas/SessionCookieConfig"
+        virtualServerName:
+          type: string
         sessionTrackingModes:
           uniqueItems: true
           type: array
@@ -1747,14 +1977,27 @@ components:
             - COOKIE
             - URL
             - SSL
+        sessionTimeout:
+          type: integer
+          format: int32
         servletRegistrations:
           type: object
           additionalProperties:
             "$ref": "#/components/schemas/ServletRegistration"
-        sessionTimeout:
+        serverInfo:
+          type: string
+        filterRegistrations:
+          type: object
+          additionalProperties:
+            "$ref": "#/components/schemas/FilterRegistration"
+        requestCharacterEncoding:
+          type: string
+        effectiveMajorVersion:
           type: integer
           format: int32
-        responseCharacterEncoding:
+        jspConfigDescriptor:
+          "$ref": "#/components/schemas/JspConfigDescriptor"
+        servletContextName:
           type: string
         defaultSessionTrackingModes:
           uniqueItems: true
@@ -1768,6 +2011,8 @@ components:
         effectiveMinorVersion:
           type: integer
           format: int32
+        responseCharacterEncoding:
+          type: string
         effectiveSessionTrackingModes:
           uniqueItems: true
           type: array
@@ -1777,21 +2022,6 @@ components:
             - COOKIE
             - URL
             - SSL
-        jspConfigDescriptor:
-          "$ref": "#/components/schemas/JspConfigDescriptor"
-        filterRegistrations:
-          type: object
-          additionalProperties:
-            "$ref": "#/components/schemas/FilterRegistration"
-        servletContextName:
-          type: string
-        requestCharacterEncoding:
-          type: string
-        effectiveMajorVersion:
-          type: integer
-          format: int32
-        serverInfo:
-          type: string
     ServletRegistration:
       type: object
       properties:
@@ -1812,11 +2042,6 @@ components:
     SessionCookieConfig:
       type: object
       properties:
-        domain:
-          type: string
-        maxAge:
-          type: integer
-          format: int32
         name:
           type: string
         path:
@@ -1828,6 +2053,11 @@ components:
         comment:
           type: string
           deprecated: true
+        domain:
+          type: string
+        maxAge:
+          type: integer
+          format: int32
         secure:
           type: boolean
         httpOnly:
@@ -1835,9 +2065,9 @@ components:
     TaglibDescriptor:
       type: object
       properties:
-        taglibLocation:
-          type: string
         taglibURI:
+          type: string
+        taglibLocation:
           type: string
     Animation:
       type: object
