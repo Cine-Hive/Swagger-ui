@@ -1774,11 +1774,11 @@ components:
     FilterRegistration:
       type: object
       properties:
-        urlPatternMappings:
+        servletNameMappings:
           type: array
           items:
             type: string
-        servletNameMappings:
+        urlPatternMappings:
           type: array
           items:
             type: string
@@ -1801,53 +1801,53 @@ components:
           type: boolean
         is5xxServerError:
           type: boolean
-        is1xxInformational:
-          type: boolean
         is3xxRedirection:
+          type: boolean
+        is1xxInformational:
           type: boolean
     JspConfigDescriptor:
       type: object
       properties:
-        jspPropertyGroups:
-          type: array
-          items:
-            "$ref": "#/components/schemas/JspPropertyGroupDescriptor"
         taglibs:
           type: array
           items:
             "$ref": "#/components/schemas/TaglibDescriptor"
+        jspPropertyGroups:
+          type: array
+          items:
+            "$ref": "#/components/schemas/JspPropertyGroupDescriptor"
     JspPropertyGroupDescriptor:
       type: object
       properties:
         buffer:
           type: string
-        errorOnUndeclaredNamespace:
+        defaultContentType:
           type: string
-        scriptingInvalid:
-          type: string
-        deferredSyntaxAllowedAsLiteral:
-          type: string
+        urlPatterns:
+          type: array
+          items:
+            type: string
         errorOnELNotFound:
           type: string
         trimDirectiveWhitespaces:
           type: string
-        includeCodas:
-          type: array
-          items:
-            type: string
-        pageEncoding:
+        errorOnUndeclaredNamespace:
           type: string
-        elIgnored:
+        deferredSyntaxAllowedAsLiteral:
+          type: string
+        scriptingInvalid:
+          type: string
+        isXml:
           type: string
         includePreludes:
           type: array
           items:
             type: string
-        isXml:
+        elIgnored:
           type: string
-        defaultContentType:
+        pageEncoding:
           type: string
-        urlPatterns:
+        includeCodas:
           type: array
           items:
             type: string
@@ -1913,13 +1913,13 @@ components:
           additionalProperties:
             type: string
           writeOnly: true
+        attributesCSV:
+          type: string
+          writeOnly: true
         attributesMap:
           type: object
           additionalProperties:
             type: object
-        attributesCSV:
-          type: string
-          writeOnly: true
     ServletContext:
       type: object
       properties:
@@ -1974,14 +1974,6 @@ components:
           type: object
         contextPath:
           type: string
-        servletRegistrations:
-          type: object
-          additionalProperties:
-            "$ref": "#/components/schemas/ServletRegistration"
-        sessionCookieConfig:
-          "$ref": "#/components/schemas/SessionCookieConfig"
-        virtualServerName:
-          type: string
         sessionTrackingModes:
           uniqueItems: true
           type: array
@@ -1992,20 +1984,24 @@ components:
             - COOKIE
             - URL
             - SSL
+        virtualServerName:
+          type: string
+        sessionCookieConfig:
+          "$ref": "#/components/schemas/SessionCookieConfig"
         sessionTimeout:
           type: integer
           format: int32
-        servletContextName:
+        servletRegistrations:
+          type: object
+          additionalProperties:
+            "$ref": "#/components/schemas/ServletRegistration"
+        serverInfo:
           type: string
-        defaultSessionTrackingModes:
-          uniqueItems: true
-          type: array
-          items:
-            type: string
-            enum:
-            - COOKIE
-            - URL
-            - SSL
+        effectiveMinorVersion:
+          type: integer
+          format: int32
+        requestCharacterEncoding:
+          type: string
         effectiveSessionTrackingModes:
           uniqueItems: true
           type: array
@@ -2017,22 +2013,26 @@ components:
             - SSL
         jspConfigDescriptor:
           "$ref": "#/components/schemas/JspConfigDescriptor"
-        requestCharacterEncoding:
+        responseCharacterEncoding:
           type: string
-        effectiveMajorVersion:
-          type: integer
-          format: int32
+        servletContextName:
+          type: string
         filterRegistrations:
           type: object
           additionalProperties:
             "$ref": "#/components/schemas/FilterRegistration"
-        responseCharacterEncoding:
-          type: string
-        effectiveMinorVersion:
+        defaultSessionTrackingModes:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+            enum:
+            - COOKIE
+            - URL
+            - SSL
+        effectiveMajorVersion:
           type: integer
           format: int32
-        serverInfo:
-          type: string
     ServletRegistration:
       type: object
       properties:
