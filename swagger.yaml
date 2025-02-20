@@ -7,18 +7,34 @@ servers:
 - url: http://localhost:8081
   description: Generated server url
 tags:
-- name: Board Controller
-  description: 게시글 CRUD, 검색, 전체 조회 기능을 제공하는 API
-- name: Bookmark Controller
-  description: 게시글의 즐겨찾기를 등록, 취소 및 전체 갯수 조회 기능을 제공하는 API
-- name: Comment Controller
-  description: '게시글 댓글의 CURD 기능을 제공하는 API '
+- name: Kakao User Controller
+  description: 카카오 로그인 API 관련 기능을 제공하는 API
+- name: Animation Controller
+  description: 애니메이션 정보 관련 기능을 제공하는 API
 - name: DisLike Controller
   description: 게시글의 싫어요를 등록, 취소 및 싫어요 수 조회 기능을 제공하는 API
 - name: Like Controller
   description: 게시글의 좋아요를 등록, 취소 및 좋아요 수 조회 기능을 제공하는 API
 - name: Report Controller
   description: 게시글의 신고하기 기능을 제공하는 API
+- name: Board Controller
+  description: 게시글 CRUD, 검색, 전체 조회 기능을 제공하는 API
+- name: Google User Controller
+  description: 구글 로그인 API 관련 기능을 제공하는 API
+- name: Naver User Controller
+  description: 네이버 로그인 API 관련 기능을 제공하는 API
+- name: Drama Controller
+  description: 드라마 정보 관련 기능을 제공하는 API
+- name: Preferred Genre Controller
+  description: 선호하는 장르 정보 관련 기능을 제공하는 API
+- name: User Controller
+  description: 사용자 관련 기능을 제공하는 API
+- name: Movie Controller
+  description: 영화 정보 관련 기능을 제공하는 API
+- name: Bookmark Controller
+  description: 게시글의 즐겨찾기를 등록, 취소 및 전체 갯수 조회 기능을 제공하는 API
+- name: Comment Controller
+  description: '게시글 댓글의 CURD 기능을 제공하는 API '
 paths:
   "/comment/board/{boardId}/update/{commentId}":
     put:
@@ -83,7 +99,7 @@ paths:
   "/search":
     post:
       tags:
-      - movie-controller
+      - Movie Controller
       summary: 클라이언트 검색
       description: 검색어를 받아 해당 검색어를 포함하는 Moive(animation 제외), 드라마(애니메이션 제외), 애니메이션을
         반환
@@ -137,7 +153,7 @@ paths:
   "/register":
     post:
       tags:
-      - user-controller
+      - User Controller
       summary: 회원가입
       description: 사용자 정보를 입력받아 일반 회원가입을 진행, 중복 검사 통과 후 user 테이블에 저장
       operationId: registerUser
@@ -157,7 +173,7 @@ paths:
   "/preferredGenres":
     post:
       tags:
-      - preferred-genre-controller
+      - Preferred Genre Controller
       summary: 선호 장르 선택
       description: 사용자가 드라마,영화,애니메이션 중 선택한 장르에 맞는 영상 반환
       operationId: getContentByGenres
@@ -179,7 +195,7 @@ paths:
   "/login":
     post:
       tags:
-      - user-controller
+      - User Controller
       summary: 로그인
       description: user 테이블에 사용자가 입력한 ID와 비밀번호 쌍이 맞는지 확인 후 로그인
       operationId: login
@@ -406,7 +422,7 @@ paths:
   "/api/auth/session":
     post:
       tags:
-      - kakao-user-controller
+      - Kakao User Controller
       summary: 세션 생성
       description: 카카오 로그인 후 인증된 사용자의 정보를 세션에 저장
       operationId: createSession
@@ -426,7 +442,7 @@ paths:
   "/api/auth/naver/register":
     post:
       tags:
-      - naver-user-controller
+      - Naver User Controller
       summary: 네이버 사용자 등록
       description: 네이버 사용자 정보를 입력받아 회원가입을 진행, 중복 검사 통과 후 naver_user 테이블에 저장
       operationId: registerUserDetails
@@ -446,7 +462,7 @@ paths:
   "/api/auth/logout":
     get:
       tags:
-      - kakao-user-controller
+      - Kakao User Controller
       summary: 로그아웃 후 리다이렉션
       description: 로그아웃 후 클라이언트를 로그인 페이지로 리다이렉션
       operationId: handleLogoutRedirect
@@ -459,7 +475,7 @@ paths:
                 "$ref": "#/components/schemas/RedirectView"
     post:
       tags:
-      - kakao-user-controller
+      - Kakao User Controller
       summary: 카카오 로그아웃
       description: 카카오 로그아웃을 위한 URL을 반환, 클라이언트에서 이 URL을 호출하여 로그아웃
       operationId: logout
@@ -473,7 +489,7 @@ paths:
   "/api/auth/kakao/register":
     post:
       tags:
-      - kakao-user-controller
+      - Kakao User Controller
       summary: 카카오 사용자 회원가입
       description: 카카오 로그인 후, 사용자가 추가 정보를 입력하면 이를 기반으로  kakao_user 테이블에 저장
       operationId: registerUserDetails_1
@@ -493,7 +509,7 @@ paths:
   "/api/auth/google/register":
     post:
       tags:
-      - google-user-controller
+      - Google User Controller
       summary: 구글 회원가입
       description: 사용자가 제공한 정보로 회원가입하고 google_user 테이블에 저장
       operationId: registerUserDetails_2
@@ -513,7 +529,7 @@ paths:
   "/top_movie":
     get:
       tags:
-      - movie-controller
+      - Movie Controller
       summary: Topmovie DB에 저장
       description: api로 받아온 topmovie 목록을 topmovie 테이블에 저장
       operationId: getTopMovies
@@ -527,7 +543,7 @@ paths:
   "/now_playing_movies":
     get:
       tags:
-      - movie-controller
+      - Movie Controller
       summary: DB에 저장된 영화 출력
       description: movie 테이블에 저장된 movie 정보를 리스트 형태로 반환
       operationId: getNowPlayingMoviesList
@@ -543,7 +559,7 @@ paths:
   "/now_playing":
     get:
       tags:
-      - movie-controller
+      - Movie Controller
       summary: 현재 상영중인 영화 DB에 저장
       description: 현재 상영중인 영화 목록을 movie 테이블에 저장
       operationId: getNowPlayingMovies
@@ -557,7 +573,7 @@ paths:
   "/movies":
     get:
       tags:
-      - movie-controller
+      - Movie Controller
       summary: DB에서 영화 받아오기
       description: movie 테이블에 저장된 모든 movie 정보를 리스트 형태로 반환
       operationId: getAllMovies
@@ -573,7 +589,7 @@ paths:
   "/movies/{id}":
     get:
       tags:
-      - movie-controller
+      - Movie Controller
       summary: Moive 상세 페이지 조회
       description: 해당 Moive ID로 영화 상세 정보를 상세 페이지에 반환, 존재하지 않는 경우 404 응답을 반환
       operationId: getMovieById
@@ -616,7 +632,7 @@ paths:
   "/get_topmovies":
     get:
       tags:
-      - movie-controller
+      - Movie Controller
       summary: 평점순 영화 받아오기
       description: topmovie 테이블에 저장된 topmovie 정보를 리스트 형태로 반환
       operationId: getTopRatedMoviesList
@@ -632,7 +648,7 @@ paths:
   "/dramas":
     get:
       tags:
-      - drama-controller
+      - Drama Controller
       summary: Drama 목록 받아오기
       description: drama 테이블에 저장된 모든 drama 정보를 리스트 형태로 반환
       operationId: getDramas
@@ -648,7 +664,7 @@ paths:
   "/dramas/{id}":
     get:
       tags:
-      - drama-controller
+      - Drama Controller
       summary: Drama 상세 페이지 받아오기
       description: 해당 Drama ID로 영화 상세 정보를 상세 페이지에 반환, 존재하지 않는 경우 404 응답을 반환
       operationId: getDramaById
@@ -714,7 +730,7 @@ paths:
   "/checknickname/{memNickname}":
     get:
       tags:
-      - user-controller
+      - User Controller
       summary: 닉네임 중복 확인
       description: user 테이블에 해당 닉네임이 이미 등록되어 있는지 확인
       operationId: checkmemNickname
@@ -734,7 +750,7 @@ paths:
   "/checkemail/{memEmail}":
     get:
       tags:
-      - user-controller
+      - User Controller
       summary: 이메일 중복 확인
       description: user 테이블에 해당 이메일이 이미 등록되어 있는지 확인
       operationId: checkmemEmail
@@ -835,7 +851,7 @@ paths:
   "/api/auth/naver":
     get:
       tags:
-      - naver-user-controller
+      - Naver User Controller
       summary: 네이버 로그인 리다이렉션
       description: 사용자를 네이버 OAuth 로그인 페이지로 리다이렉션하여 네이버 인증을 시작
       operationId: naverLoginRedirect
@@ -845,7 +861,7 @@ paths:
   "/api/auth/naver/success":
     get:
       tags:
-      - naver-user-controller
+      - Naver User Controller
       summary: 네이버 로그인 성공 페이지
       description: 네이버 로그인 성공 시 사용자 정보를 반환
       operationId: naverSuccessPage
@@ -859,7 +875,7 @@ paths:
   "/api/auth/naver/check-user":
     get:
       tags:
-      - naver-user-controller
+      - Naver User Controller
       summary: 네이버 사용자 중복 확인
       description: 해당 네이버 ID가 이미 등록되어 있는지 확인
       operationId: checkUser
@@ -879,7 +895,7 @@ paths:
   "/api/auth/naver/callback":
     get:
       tags:
-      - naver-user-controller
+      - Naver User Controller
       summary: 네이버 OAuth 로그인 및 사용자 등록
       description: 네이버 OAuth 인증 후 사용자 정보를 이용하여 로그인하거나, 신규 사용자를 등록하고 로그인 후 사용자를 리다이렉션
       operationId: naverCallback
@@ -900,7 +916,7 @@ paths:
   "/api/auth/kakao":
     get:
       tags:
-      - kakao-user-controller
+      - Kakao User Controller
       summary: 카카오 로그인
       description: 카카오 OAuth 로그인 페이지로 사용자를 리다이렉션하여 카카오 인증을 시작
       operationId: kakaoLogin
@@ -910,7 +926,7 @@ paths:
   "/api/auth/kakao/success":
     get:
       tags:
-      - kakao-user-controller
+      - Kakao User Controller
       summary: 카카오 로그인 성공 정보 반환
       description: 세션에서 카카오 로그인한 사용자 정보를 가져와 반환, 인증되지 않은 사용자는 401 오류를 반환
       operationId: successPage
@@ -924,7 +940,7 @@ paths:
   "/api/auth/kakao/check-user":
     get:
       tags:
-      - kakao-user-controller
+      - Kakao User Controller
       summary: 카카오 사용자 중복 확인
       description: 카카오 사용자 ID를 이용하여 사용자가 이미 존재하는지 확인
       operationId: checkUser_1
@@ -944,7 +960,7 @@ paths:
   "/api/auth/kakao/callback":
     get:
       tags:
-      - kakao-user-controller
+      - Kakao User Controller
       summary: 카카오 OAuth 로그인 및 사용자 등록
       description: 카카오 OAuth 인증 후 사용자 정보를 이용하여 로그인하거나, 신규 사용자를 등록하고 로그인 후 사용자를 리다이렉션
       operationId: kakaoCallback
@@ -960,7 +976,7 @@ paths:
   "/api/auth/google":
     get:
       tags:
-      - google-user-controller
+      - Google User Controller
       summary: 구글 로그인 리다이렉션
       description: 사용자를 구글 OAuth 로그인 페이지로 리다이렉션하여 구글 인증을 시작
       operationId: googleLoginRedirect
@@ -970,7 +986,7 @@ paths:
   "/api/auth/google/success":
     get:
       tags:
-      - google-user-controller
+      - Google User Controller
       summary: 구글 인증 성공
       description: 구글 OAuth 인증 성공 후 세션에 저장된 사용자 정보를 반환, 사용자가 인증되지 않은 경우 401 상태 코드와
         함께 오류 메시지를 반환
@@ -985,7 +1001,7 @@ paths:
   "/api/auth/google/check-user":
     get:
       tags:
-      - google-user-controller
+      - Google User Controller
       summary: 구글 사용자 중복 확인
       description: 해당 구글 ID가 이미 등록되어 있는지 확인
       operationId: checkUser_2
@@ -1005,7 +1021,7 @@ paths:
   "/api/auth/google/callback":
     get:
       tags:
-      - google-user-controller
+      - Google User Controller
       summary: 구글 OAuth 로그린 및 사용자 등록
       description: 구글 OAuth 인증 후 구글 사용자 정보를 이용하여 로그인하거나 신규 사용자를 등록, 인증 후 해당 사용자를 리다이렉션
       operationId: googleCallback
@@ -1021,7 +1037,7 @@ paths:
   "/animations":
     get:
       tags:
-      - animation-controller
+      - Animation Controller
       summary: Animation 목록 받아오기
       description: animation 테이블에 저장된 모든 animation 정보를 리스트 형태로 반환
       operationId: getMovies
@@ -1037,7 +1053,7 @@ paths:
   "/animations/{id}":
     get:
       tags:
-      - animation-controller
+      - Animation Controller
       summary: Animation 상세 페이지 받아오기
       description: 해당 Animation ID로 Animation 정보를 상세 페이지에 반환, 존재하지 않는 경우 404 응답을 반환
       operationId: getAnimationById
@@ -1526,11 +1542,11 @@ components:
           type: string
         autowireCapableBeanFactory:
           "$ref": "#/components/schemas/AutowireCapableBeanFactory"
+        applicationName:
+          type: string
         startupDate:
           type: integer
           format: int64
-        applicationName:
-          type: string
         environment:
           "$ref": "#/components/schemas/Environment"
         beanDefinitionNames:
@@ -1774,11 +1790,11 @@ components:
     FilterRegistration:
       type: object
       properties:
-        servletNameMappings:
+        urlPatternMappings:
           type: array
           items:
             type: string
-        urlPatternMappings:
+        servletNameMappings:
           type: array
           items:
             type: string
@@ -1821,36 +1837,36 @@ components:
       properties:
         buffer:
           type: string
+        isXml:
+          type: string
+        elIgnored:
+          type: string
+        includePreludes:
+          type: array
+          items:
+            type: string
+        includeCodas:
+          type: array
+          items:
+            type: string
+        pageEncoding:
+          type: string
         defaultContentType:
           type: string
         urlPatterns:
           type: array
           items:
             type: string
-        errorOnELNotFound:
-          type: string
-        trimDirectiveWhitespaces:
+        scriptingInvalid:
           type: string
         errorOnUndeclaredNamespace:
           type: string
         deferredSyntaxAllowedAsLiteral:
           type: string
-        scriptingInvalid:
+        trimDirectiveWhitespaces:
           type: string
-        isXml:
+        errorOnELNotFound:
           type: string
-        includePreludes:
-          type: array
-          items:
-            type: string
-        elIgnored:
-          type: string
-        pageEncoding:
-          type: string
-        includeCodas:
-          type: array
-          items:
-            type: string
     RedirectView:
       type: object
       properties:
@@ -1913,13 +1929,13 @@ components:
           additionalProperties:
             type: string
           writeOnly: true
-        attributesCSV:
-          type: string
-          writeOnly: true
         attributesMap:
           type: object
           additionalProperties:
             type: object
+        attributesCSV:
+          type: string
+          writeOnly: true
     ServletContext:
       type: object
       properties:
@@ -1970,9 +1986,17 @@ components:
           format: int32
         attributeNames:
           type: object
+        servletRegistrations:
+          type: object
+          additionalProperties:
+            "$ref": "#/components/schemas/ServletRegistration"
         initParameterNames:
           type: object
         contextPath:
+          type: string
+        sessionCookieConfig:
+          "$ref": "#/components/schemas/SessionCookieConfig"
+        virtualServerName:
           type: string
         sessionTrackingModes:
           uniqueItems: true
@@ -1984,22 +2008,20 @@ components:
             - COOKIE
             - URL
             - SSL
-        virtualServerName:
-          type: string
-        sessionCookieConfig:
-          "$ref": "#/components/schemas/SessionCookieConfig"
         sessionTimeout:
           type: integer
           format: int32
-        servletRegistrations:
-          type: object
-          additionalProperties:
-            "$ref": "#/components/schemas/ServletRegistration"
         serverInfo:
+          type: string
+        servletContextName:
+          type: string
+        responseCharacterEncoding:
           type: string
         effectiveMinorVersion:
           type: integer
           format: int32
+        jspConfigDescriptor:
+          "$ref": "#/components/schemas/JspConfigDescriptor"
         requestCharacterEncoding:
           type: string
         effectiveSessionTrackingModes:
@@ -2011,16 +2033,6 @@ components:
             - COOKIE
             - URL
             - SSL
-        jspConfigDescriptor:
-          "$ref": "#/components/schemas/JspConfigDescriptor"
-        responseCharacterEncoding:
-          type: string
-        servletContextName:
-          type: string
-        filterRegistrations:
-          type: object
-          additionalProperties:
-            "$ref": "#/components/schemas/FilterRegistration"
         defaultSessionTrackingModes:
           uniqueItems: true
           type: array
@@ -2030,6 +2042,10 @@ components:
             - COOKIE
             - URL
             - SSL
+        filterRegistrations:
+          type: object
+          additionalProperties:
+            "$ref": "#/components/schemas/FilterRegistration"
         effectiveMajorVersion:
           type: integer
           format: int32
@@ -2076,9 +2092,9 @@ components:
     TaglibDescriptor:
       type: object
       properties:
-        taglibURI:
-          type: string
         taglibLocation:
+          type: string
+        taglibURI:
           type: string
     Animation:
       type: object
