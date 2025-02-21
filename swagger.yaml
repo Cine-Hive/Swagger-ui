@@ -1865,9 +1865,9 @@ components:
           type: boolean
         is2xxSuccessful:
           type: boolean
-        is4xxClientError:
-          type: boolean
         is5xxServerError:
+          type: boolean
+        is4xxClientError:
           type: boolean
         is1xxInformational:
           type: boolean
@@ -1876,18 +1876,28 @@ components:
     JspConfigDescriptor:
       type: object
       properties:
-        jspPropertyGroups:
-          type: array
-          items:
-            "$ref": "#/components/schemas/JspPropertyGroupDescriptor"
         taglibs:
           type: array
           items:
             "$ref": "#/components/schemas/TaglibDescriptor"
+        jspPropertyGroups:
+          type: array
+          items:
+            "$ref": "#/components/schemas/JspPropertyGroupDescriptor"
     JspPropertyGroupDescriptor:
       type: object
       properties:
         buffer:
+          type: string
+        errorOnELNotFound:
+          type: string
+        scriptingInvalid:
+          type: string
+        trimDirectiveWhitespaces:
+          type: string
+        deferredSyntaxAllowedAsLiteral:
+          type: string
+        errorOnUndeclaredNamespace:
           type: string
         defaultContentType:
           type: string
@@ -1895,25 +1905,15 @@ components:
           type: array
           items:
             type: string
-        scriptingInvalid:
-          type: string
-        errorOnUndeclaredNamespace:
-          type: string
-        deferredSyntaxAllowedAsLiteral:
-          type: string
-        errorOnELNotFound:
-          type: string
-        trimDirectiveWhitespaces:
-          type: string
         pageEncoding:
           type: string
-        isXml:
+        elIgnored:
           type: string
         includePreludes:
           type: array
           items:
             type: string
-        elIgnored:
+        isXml:
           type: string
         includeCodas:
           type: array
@@ -2063,29 +2063,10 @@ components:
           type: object
           additionalProperties:
             "$ref": "#/components/schemas/ServletRegistration"
-        effectiveMinorVersion:
-          type: integer
-          format: int32
-        effectiveMajorVersion:
-          type: integer
-          format: int32
-        responseCharacterEncoding:
-          type: string
-        servletContextName:
-          type: string
-        requestCharacterEncoding:
-          type: string
-        jspConfigDescriptor:
-          "$ref": "#/components/schemas/JspConfigDescriptor"
-        effectiveSessionTrackingModes:
-          uniqueItems: true
-          type: array
-          items:
-            type: string
-            enum:
-            - COOKIE
-            - URL
-            - SSL
+        filterRegistrations:
+          type: object
+          additionalProperties:
+            "$ref": "#/components/schemas/FilterRegistration"
         defaultSessionTrackingModes:
           uniqueItems: true
           type: array
@@ -2095,10 +2076,29 @@ components:
             - COOKIE
             - URL
             - SSL
-        filterRegistrations:
-          type: object
-          additionalProperties:
-            "$ref": "#/components/schemas/FilterRegistration"
+        effectiveSessionTrackingModes:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+            enum:
+            - COOKIE
+            - URL
+            - SSL
+        jspConfigDescriptor:
+          "$ref": "#/components/schemas/JspConfigDescriptor"
+        requestCharacterEncoding:
+          type: string
+        effectiveMajorVersion:
+          type: integer
+          format: int32
+        effectiveMinorVersion:
+          type: integer
+          format: int32
+        servletContextName:
+          type: string
+        responseCharacterEncoding:
+          type: string
         serverInfo:
           type: string
     ServletRegistration:
@@ -2144,9 +2144,9 @@ components:
     TaglibDescriptor:
       type: object
       properties:
-        taglibLocation:
-          type: string
         taglibURI:
+          type: string
+        taglibLocation:
           type: string
     Animation:
       type: object
