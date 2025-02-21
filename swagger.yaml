@@ -87,7 +87,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/UpdateBoardRequest"
+              "$ref": "#/components/schemas/Board"
         required: true
       responses:
         '200':
@@ -410,7 +410,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/CreateBoardDto"
+              "$ref": "#/components/schemas/BoardDto"
         required: true
       responses:
         '200':
@@ -804,7 +804,7 @@ paths:
               schema:
                 type: array
                 items:
-                  "$ref": "#/components/schemas/GetListBoardDto"
+                  "$ref": "#/components/schemas/BoardDto"
   "/boards/search":
     get:
       tags:
@@ -826,7 +826,7 @@ paths:
               schema:
                 type: array
                 items:
-                  "$ref": "#/components/schemas/BoardSearchDto"
+                  "$ref": "#/components/schemas/BoardDto"
   "/boards/detail/{id}":
     get:
       tags:
@@ -1125,18 +1125,9 @@ components:
           type: string
         memEmail:
           type: string
-        brgRedDate:
+        createdAt:
           type: string
           format: date-time
-    UpdateBoardRequest:
-      type: object
-      properties:
-        memEmail:
-          type: string
-        brdTitle:
-          type: string
-        brdContent:
-          type: string
     Board:
       type: object
       properties:
@@ -1333,15 +1324,38 @@ components:
           type: string
         memPassword:
           type: string
-    CreateBoardDto:
+    BoardDto:
       type: object
       properties:
-        memEmail:
-          type: string
+        id:
+          type: integer
+          format: int64
         brdTitle:
           type: string
         brdContent:
           type: string
+        memNickname:
+          type: string
+        memEmail:
+          type: string
+        brgRedDate:
+          type: string
+          format: date-time
+        bookmarkCount:
+          type: integer
+          format: int32
+        likeCount:
+          type: integer
+          format: int32
+        dislikeCount:
+          type: integer
+          format: int32
+        reportCount:
+          type: integer
+          format: int32
+        commentCount:
+          type: integer
+          format: int32
     KakaoUserInfo:
       type: object
       properties:
@@ -1517,72 +1531,6 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/Actor"
-    GetListBoardDto:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        brdTitle:
-          type: string
-        brdContent:
-          type: string
-        memNickname:
-          type: string
-        brgRegDate:
-          type: string
-          format: date-time
-        likeCount:
-          type: integer
-          format: int32
-        views:
-          type: integer
-          format: int32
-    BoardSearchDto:
-      type: object
-      properties:
-        brdTitle:
-          type: string
-        brdContent:
-          type: string
-        memNickname:
-          type: string
-    BoardDto:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        brdTitle:
-          type: string
-        brdContent:
-          type: string
-        memNickname:
-          type: string
-        memEmail:
-          type: string
-        brgRedDate:
-          type: string
-          format: date-time
-        bookmarkCount:
-          type: integer
-          format: int32
-        likeCount:
-          type: integer
-          format: int32
-        dislikeCount:
-          type: integer
-          format: int32
-        reportCount:
-          type: integer
-          format: int32
-        commentCount:
-          type: integer
-          format: int32
-        comments:
-          type: array
-          items:
-            "$ref": "#/components/schemas/CommentDto"
     ApplicationContext:
       type: object
       properties:
@@ -1594,11 +1542,11 @@ components:
           type: string
         autowireCapableBeanFactory:
           "$ref": "#/components/schemas/AutowireCapableBeanFactory"
+        applicationName:
+          type: string
         startupDate:
           type: integer
           format: int64
-        applicationName:
-          type: string
         environment:
           "$ref": "#/components/schemas/Environment"
         beanDefinitionCount:
@@ -1831,22 +1779,22 @@ components:
     Environment:
       type: object
       properties:
-        defaultProfiles:
+        activeProfiles:
           type: array
           items:
             type: string
-        activeProfiles:
+        defaultProfiles:
           type: array
           items:
             type: string
     FilterRegistration:
       type: object
       properties:
-        urlPatternMappings:
+        servletNameMappings:
           type: array
           items:
             type: string
-        servletNameMappings:
+        urlPatternMappings:
           type: array
           items:
             type: string
@@ -1865,9 +1813,9 @@ components:
           type: boolean
         is2xxSuccessful:
           type: boolean
-        is4xxClientError:
-          type: boolean
         is5xxServerError:
+          type: boolean
+        is4xxClientError:
           type: boolean
         is1xxInformational:
           type: boolean
@@ -1891,31 +1839,31 @@ components:
           type: string
         defaultContentType:
           type: string
+        deferredSyntaxAllowedAsLiteral:
+          type: string
+        trimDirectiveWhitespaces:
+          type: string
+        scriptingInvalid:
+          type: string
+        errorOnUndeclaredNamespace:
+          type: string
+        errorOnELNotFound:
+          type: string
         urlPatterns:
           type: array
           items:
             type: string
-        scriptingInvalid:
-          type: string
-        trimDirectiveWhitespaces:
-          type: string
-        errorOnELNotFound:
-          type: string
-        deferredSyntaxAllowedAsLiteral:
-          type: string
-        errorOnUndeclaredNamespace:
-          type: string
         pageEncoding:
-          type: string
-        elIgnored:
           type: string
         isXml:
           type: string
-        includePreludes:
+        includeCodas:
           type: array
           items:
             type: string
-        includeCodas:
+        elIgnored:
+          type: string
+        includePreludes:
           type: array
           items:
             type: string
@@ -1976,15 +1924,15 @@ components:
           type: boolean
         propagateQueryProperties:
           type: boolean
-        attributesMap:
-          type: object
-          additionalProperties:
-            type: object
         attributes:
           type: object
           additionalProperties:
             type: string
           writeOnly: true
+        attributesMap:
+          type: object
+          additionalProperties:
+            type: object
         attributesCSV:
           type: string
           writeOnly: true
@@ -2063,25 +2011,11 @@ components:
           type: object
           additionalProperties:
             "$ref": "#/components/schemas/ServletRegistration"
-        jspConfigDescriptor:
-          "$ref": "#/components/schemas/JspConfigDescriptor"
-        responseCharacterEncoding:
-          type: string
-        requestCharacterEncoding:
-          type: string
-        effectiveMajorVersion:
-          type: integer
-          format: int32
-        effectiveMinorVersion:
-          type: integer
-          format: int32
         filterRegistrations:
           type: object
           additionalProperties:
             "$ref": "#/components/schemas/FilterRegistration"
-        servletContextName:
-          type: string
-        defaultSessionTrackingModes:
+        effectiveSessionTrackingModes:
           uniqueItems: true
           type: array
           items:
@@ -2090,7 +2024,21 @@ components:
             - COOKIE
             - URL
             - SSL
-        effectiveSessionTrackingModes:
+        servletContextName:
+          type: string
+        responseCharacterEncoding:
+          type: string
+        jspConfigDescriptor:
+          "$ref": "#/components/schemas/JspConfigDescriptor"
+        effectiveMinorVersion:
+          type: integer
+          format: int32
+        requestCharacterEncoding:
+          type: string
+        effectiveMajorVersion:
+          type: integer
+          format: int32
+        defaultSessionTrackingModes:
           uniqueItems: true
           type: array
           items:
@@ -2121,6 +2069,11 @@ components:
     SessionCookieConfig:
       type: object
       properties:
+        domain:
+          type: string
+        maxAge:
+          type: integer
+          format: int32
         name:
           type: string
         path:
@@ -2134,11 +2087,6 @@ components:
           deprecated: true
         secure:
           type: boolean
-        maxAge:
-          type: integer
-          format: int32
-        domain:
-          type: string
         httpOnly:
           type: boolean
     TaglibDescriptor:
