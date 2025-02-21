@@ -569,7 +569,7 @@ paths:
               schema:
                 type: array
                 items:
-                  "$ref": "#/components/schemas/Movie"
+                  "$ref": "#/components/schemas/NowPlayingMovieDto"
   "/movies":
     get:
       tags:
@@ -644,7 +644,7 @@ paths:
               schema:
                 type: array
                 items:
-                  "$ref": "#/components/schemas/TopMovie"
+                  "$ref": "#/components/schemas/TopRatedMovieDto"
   "/dramas":
     get:
       tags:
@@ -1355,6 +1355,14 @@ components:
           type: array
           items:
             type: string
+    NowPlayingMovieDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        posterPath:
+          type: string
     Actor:
       type: object
       properties:
@@ -1440,39 +1448,14 @@ components:
           type: string
         type:
           type: string
-    TopMovie:
+    TopRatedMovieDto:
       type: object
       properties:
         id:
           type: integer
           format: int64
-        title:
-          type: string
-        overview:
-          type: string
         posterPath:
           type: string
-        backdropPath:
-          type: string
-        releaseDate:
-          type: string
-          format: date
-        genreIds:
-          type: array
-          items:
-            type: integer
-            format: int32
-        voteAverage:
-          type: number
-          format: double
-        voteCount:
-          type: integer
-          format: int32
-        popularity:
-          type: number
-          format: double
-        adult:
-          type: boolean
     Drama:
       type: object
       properties:
@@ -1601,13 +1584,13 @@ components:
           format: int64
         environment:
           "$ref": "#/components/schemas/Environment"
-        beanDefinitionCount:
-          type: integer
-          format: int32
         beanDefinitionNames:
           type: array
           items:
             type: string
+        beanDefinitionCount:
+          type: integer
+          format: int32
         parentBeanFactory:
           "$ref": "#/components/schemas/BeanFactory"
         classLoader:
@@ -1831,22 +1814,22 @@ components:
     Environment:
       type: object
       properties:
-        activeProfiles:
+        defaultProfiles:
           type: array
           items:
             type: string
-        defaultProfiles:
+        activeProfiles:
           type: array
           items:
             type: string
     FilterRegistration:
       type: object
       properties:
-        urlPatternMappings:
+        servletNameMappings:
           type: array
           items:
             type: string
-        servletNameMappings:
+        urlPatternMappings:
           type: array
           items:
             type: string
@@ -1869,35 +1852,25 @@ components:
           type: boolean
         is4xxClientError:
           type: boolean
-        is1xxInformational:
-          type: boolean
         is3xxRedirection:
+          type: boolean
+        is1xxInformational:
           type: boolean
     JspConfigDescriptor:
       type: object
       properties:
-        taglibs:
-          type: array
-          items:
-            "$ref": "#/components/schemas/TaglibDescriptor"
         jspPropertyGroups:
           type: array
           items:
             "$ref": "#/components/schemas/JspPropertyGroupDescriptor"
+        taglibs:
+          type: array
+          items:
+            "$ref": "#/components/schemas/TaglibDescriptor"
     JspPropertyGroupDescriptor:
       type: object
       properties:
         buffer:
-          type: string
-        errorOnELNotFound:
-          type: string
-        scriptingInvalid:
-          type: string
-        trimDirectiveWhitespaces:
-          type: string
-        deferredSyntaxAllowedAsLiteral:
-          type: string
-        errorOnUndeclaredNamespace:
           type: string
         defaultContentType:
           type: string
@@ -1905,20 +1878,30 @@ components:
           type: array
           items:
             type: string
-        pageEncoding:
+        trimDirectiveWhitespaces:
+          type: string
+        errorOnELNotFound:
+          type: string
+        deferredSyntaxAllowedAsLiteral:
+          type: string
+        errorOnUndeclaredNamespace:
+          type: string
+        scriptingInvalid:
           type: string
         elIgnored:
+          type: string
+        pageEncoding:
           type: string
         includePreludes:
           type: array
           items:
             type: string
-        isXml:
-          type: string
         includeCodas:
           type: array
           items:
             type: string
+        isXml:
+          type: string
     RedirectView:
       type: object
       properties:
@@ -2063,6 +2046,26 @@ components:
           type: object
           additionalProperties:
             "$ref": "#/components/schemas/ServletRegistration"
+        requestCharacterEncoding:
+          type: string
+        effectiveSessionTrackingModes:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+            enum:
+            - COOKIE
+            - URL
+            - SSL
+        effectiveMinorVersion:
+          type: integer
+          format: int32
+        responseCharacterEncoding:
+          type: string
+        servletContextName:
+          type: string
+        jspConfigDescriptor:
+          "$ref": "#/components/schemas/JspConfigDescriptor"
         filterRegistrations:
           type: object
           additionalProperties:
@@ -2076,29 +2079,9 @@ components:
             - COOKIE
             - URL
             - SSL
-        effectiveSessionTrackingModes:
-          uniqueItems: true
-          type: array
-          items:
-            type: string
-            enum:
-            - COOKIE
-            - URL
-            - SSL
-        jspConfigDescriptor:
-          "$ref": "#/components/schemas/JspConfigDescriptor"
-        requestCharacterEncoding:
-          type: string
         effectiveMajorVersion:
           type: integer
           format: int32
-        effectiveMinorVersion:
-          type: integer
-          format: int32
-        servletContextName:
-          type: string
-        responseCharacterEncoding:
-          type: string
         serverInfo:
           type: string
     ServletRegistration:
