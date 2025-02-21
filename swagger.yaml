@@ -1386,11 +1386,6 @@ components:
           format: int64
         name:
           type: string
-        gender:
-          type: integer
-          format: int32
-        job:
-          type: string
     Movie:
       type: object
       properties:
@@ -1403,8 +1398,6 @@ components:
           type: string
         posterPath:
           type: string
-        backdropPath:
-          type: string
         releaseDate:
           type: string
           format: date
@@ -1416,14 +1409,9 @@ components:
         voteAverage:
           type: number
           format: double
-        voteCount:
-          type: integer
-          format: int32
         popularity:
           type: number
           format: double
-        adult:
-          type: boolean
         actors:
           type: array
           items:
@@ -1443,10 +1431,6 @@ components:
         videoKey:
           type: string
         name:
-          type: string
-        site:
-          type: string
-        type:
           type: string
     TopRatedMovieDto:
       type: object
@@ -1575,11 +1559,11 @@ components:
           type: string
         displayName:
           type: string
+        applicationName:
+          type: string
         startupDate:
           type: integer
           format: int64
-        applicationName:
-          type: string
         autowireCapableBeanFactory:
           "$ref": "#/components/schemas/AutowireCapableBeanFactory"
         environment:
@@ -1814,22 +1798,22 @@ components:
     Environment:
       type: object
       properties:
-        activeProfiles:
+        defaultProfiles:
           type: array
           items:
             type: string
-        defaultProfiles:
+        activeProfiles:
           type: array
           items:
             type: string
     FilterRegistration:
       type: object
       properties:
-        urlPatternMappings:
+        servletNameMappings:
           type: array
           items:
             type: string
-        servletNameMappings:
+        urlPatternMappings:
           type: array
           items:
             type: string
@@ -1852,49 +1836,27 @@ components:
           type: boolean
         is5xxServerError:
           type: boolean
-        is1xxInformational:
-          type: boolean
         is3xxRedirection:
+          type: boolean
+        is1xxInformational:
           type: boolean
     JspConfigDescriptor:
       type: object
       properties:
-        jspPropertyGroups:
-          type: array
-          items:
-            "$ref": "#/components/schemas/JspPropertyGroupDescriptor"
         taglibs:
           type: array
           items:
             "$ref": "#/components/schemas/TaglibDescriptor"
+        jspPropertyGroups:
+          type: array
+          items:
+            "$ref": "#/components/schemas/JspPropertyGroupDescriptor"
     JspPropertyGroupDescriptor:
       type: object
       properties:
         buffer:
           type: string
-        defaultContentType:
-          type: string
-        urlPatterns:
-          type: array
-          items:
-            type: string
-        deferredSyntaxAllowedAsLiteral:
-          type: string
-        errorOnUndeclaredNamespace:
-          type: string
-        scriptingInvalid:
-          type: string
-        trimDirectiveWhitespaces:
-          type: string
-        errorOnELNotFound:
-          type: string
-        includeCodas:
-          type: array
-          items:
-            type: string
         pageEncoding:
-          type: string
-        isXml:
           type: string
         elIgnored:
           type: string
@@ -1902,6 +1864,28 @@ components:
           type: array
           items:
             type: string
+        isXml:
+          type: string
+        includeCodas:
+          type: array
+          items:
+            type: string
+        defaultContentType:
+          type: string
+        urlPatterns:
+          type: array
+          items:
+            type: string
+        errorOnELNotFound:
+          type: string
+        scriptingInvalid:
+          type: string
+        deferredSyntaxAllowedAsLiteral:
+          type: string
+        trimDirectiveWhitespaces:
+          type: string
+        errorOnUndeclaredNamespace:
+          type: string
     RedirectView:
       type: object
       properties:
@@ -2048,26 +2032,16 @@ components:
             "$ref": "#/components/schemas/ServletRegistration"
         servletContextName:
           type: string
+        effectiveMajorVersion:
+          type: integer
+          format: int32
+        effectiveMinorVersion:
+          type: integer
+          format: int32
         filterRegistrations:
           type: object
           additionalProperties:
             "$ref": "#/components/schemas/FilterRegistration"
-        requestCharacterEncoding:
-          type: string
-        responseCharacterEncoding:
-          type: string
-        effectiveMajorVersion:
-          type: integer
-          format: int32
-        effectiveSessionTrackingModes:
-          uniqueItems: true
-          type: array
-          items:
-            type: string
-            enum:
-            - COOKIE
-            - URL
-            - SSL
         defaultSessionTrackingModes:
           uniqueItems: true
           type: array
@@ -2077,9 +2051,19 @@ components:
             - COOKIE
             - URL
             - SSL
-        effectiveMinorVersion:
-          type: integer
-          format: int32
+        requestCharacterEncoding:
+          type: string
+        responseCharacterEncoding:
+          type: string
+        effectiveSessionTrackingModes:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+            enum:
+            - COOKIE
+            - URL
+            - SSL
         jspConfigDescriptor:
           "$ref": "#/components/schemas/JspConfigDescriptor"
         serverInfo:
@@ -2104,11 +2088,6 @@ components:
     SessionCookieConfig:
       type: object
       properties:
-        domain:
-          type: string
-        maxAge:
-          type: integer
-          format: int32
         name:
           type: string
         path:
@@ -2120,6 +2099,11 @@ components:
         comment:
           type: string
           deprecated: true
+        domain:
+          type: string
+        maxAge:
+          type: integer
+          format: int32
         secure:
           type: boolean
         httpOnly:
@@ -2127,9 +2111,9 @@ components:
     TaglibDescriptor:
       type: object
       properties:
-        taglibLocation:
-          type: string
         taglibURI:
+          type: string
+        taglibLocation:
           type: string
     Animation:
       type: object
