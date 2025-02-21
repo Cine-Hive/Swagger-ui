@@ -1371,13 +1371,6 @@ components:
           format: int64
         name:
           type: string
-        originalName:
-          type: string
-        role:
-          type: string
-        gender:
-          type: integer
-          format: int32
     Director:
       type: object
       properties:
@@ -1559,13 +1552,13 @@ components:
           type: string
         displayName:
           type: string
+        autowireCapableBeanFactory:
+          "$ref": "#/components/schemas/AutowireCapableBeanFactory"
         applicationName:
           type: string
         startupDate:
           type: integer
           format: int64
-        autowireCapableBeanFactory:
-          "$ref": "#/components/schemas/AutowireCapableBeanFactory"
         environment:
           "$ref": "#/components/schemas/Environment"
         beanDefinitionCount:
@@ -1809,11 +1802,11 @@ components:
     FilterRegistration:
       type: object
       properties:
-        servletNameMappings:
+        urlPatternMappings:
           type: array
           items:
             type: string
-        urlPatternMappings:
+        servletNameMappings:
           type: array
           items:
             type: string
@@ -1832,9 +1825,9 @@ components:
           type: boolean
         is2xxSuccessful:
           type: boolean
-        is4xxClientError:
-          type: boolean
         is5xxServerError:
+          type: boolean
+        is4xxClientError:
           type: boolean
         is3xxRedirection:
           type: boolean
@@ -1843,33 +1836,19 @@ components:
     JspConfigDescriptor:
       type: object
       properties:
-        taglibs:
-          type: array
-          items:
-            "$ref": "#/components/schemas/TaglibDescriptor"
         jspPropertyGroups:
           type: array
           items:
             "$ref": "#/components/schemas/JspPropertyGroupDescriptor"
+        taglibs:
+          type: array
+          items:
+            "$ref": "#/components/schemas/TaglibDescriptor"
     JspPropertyGroupDescriptor:
       type: object
       properties:
         buffer:
           type: string
-        pageEncoding:
-          type: string
-        elIgnored:
-          type: string
-        includePreludes:
-          type: array
-          items:
-            type: string
-        isXml:
-          type: string
-        includeCodas:
-          type: array
-          items:
-            type: string
         defaultContentType:
           type: string
         urlPatterns:
@@ -1886,6 +1865,20 @@ components:
           type: string
         errorOnUndeclaredNamespace:
           type: string
+        elIgnored:
+          type: string
+        pageEncoding:
+          type: string
+        isXml:
+          type: string
+        includeCodas:
+          type: array
+          items:
+            type: string
+        includePreludes:
+          type: array
+          items:
+            type: string
     RedirectView:
       type: object
       properties:
@@ -2030,11 +2023,26 @@ components:
           type: object
           additionalProperties:
             "$ref": "#/components/schemas/ServletRegistration"
-        servletContextName:
-          type: string
         effectiveMajorVersion:
           type: integer
           format: int32
+        servletContextName:
+          type: string
+        effectiveSessionTrackingModes:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+            enum:
+            - COOKIE
+            - URL
+            - SSL
+        requestCharacterEncoding:
+          type: string
+        jspConfigDescriptor:
+          "$ref": "#/components/schemas/JspConfigDescriptor"
+        responseCharacterEncoding:
+          type: string
         effectiveMinorVersion:
           type: integer
           format: int32
@@ -2051,21 +2059,6 @@ components:
             - COOKIE
             - URL
             - SSL
-        requestCharacterEncoding:
-          type: string
-        responseCharacterEncoding:
-          type: string
-        effectiveSessionTrackingModes:
-          uniqueItems: true
-          type: array
-          items:
-            type: string
-            enum:
-            - COOKIE
-            - URL
-            - SSL
-        jspConfigDescriptor:
-          "$ref": "#/components/schemas/JspConfigDescriptor"
         serverInfo:
           type: string
     ServletRegistration:
@@ -2088,6 +2081,11 @@ components:
     SessionCookieConfig:
       type: object
       properties:
+        domain:
+          type: string
+        maxAge:
+          type: integer
+          format: int32
         name:
           type: string
         path:
@@ -2099,11 +2097,6 @@ components:
         comment:
           type: string
           deprecated: true
-        domain:
-          type: string
-        maxAge:
-          type: integer
-          format: int32
         secure:
           type: boolean
         httpOnly:
