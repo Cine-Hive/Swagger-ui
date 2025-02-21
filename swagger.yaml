@@ -100,7 +100,7 @@ paths:
     post:
       tags:
       - Movie Controller
-      summary: Top rated 영화 수동으로 DB에 저장
+      summary: 평점 순위 영화 수동으로 DB에 저장
       description: api로 받아온 topmovie 목록을 topmovie 테이블에 저장
       operationId: getTopMovies
       responses:
@@ -590,7 +590,7 @@ paths:
     get:
       tags:
       - Movie Controller
-      summary: Moive 상세 페이지 조회
+      summary: 영화 상세 페이지 조회
       description: 해당 Moive ID로 영화 상세 정보를 상세 페이지에 반환, 존재하지 않는 경우 404 응답을 반환
       operationId: getMovieById
       parameters:
@@ -1575,13 +1575,13 @@ components:
           type: string
         displayName:
           type: string
-        autowireCapableBeanFactory:
-          "$ref": "#/components/schemas/AutowireCapableBeanFactory"
-        applicationName:
-          type: string
         startupDate:
           type: integer
           format: int64
+        applicationName:
+          type: string
+        autowireCapableBeanFactory:
+          "$ref": "#/components/schemas/AutowireCapableBeanFactory"
         environment:
           "$ref": "#/components/schemas/Environment"
         beanDefinitionCount:
@@ -1846,11 +1846,11 @@ components:
       properties:
         error:
           type: boolean
-        is5xxServerError:
+        is2xxSuccessful:
           type: boolean
         is4xxClientError:
           type: boolean
-        is2xxSuccessful:
+        is5xxServerError:
           type: boolean
         is1xxInformational:
           type: boolean
@@ -1872,33 +1872,33 @@ components:
       properties:
         buffer:
           type: string
-        elIgnored:
+        defaultContentType:
           type: string
-        pageEncoding:
-          type: string
-        isXml:
-          type: string
-        includePreludes:
+        urlPatterns:
           type: array
           items:
             type: string
+        deferredSyntaxAllowedAsLiteral:
+          type: string
+        errorOnUndeclaredNamespace:
+          type: string
+        scriptingInvalid:
+          type: string
+        trimDirectiveWhitespaces:
+          type: string
+        errorOnELNotFound:
+          type: string
         includeCodas:
           type: array
           items:
             type: string
-        errorOnUndeclaredNamespace:
+        pageEncoding:
           type: string
-        trimDirectiveWhitespaces:
+        isXml:
           type: string
-        scriptingInvalid:
+        elIgnored:
           type: string
-        errorOnELNotFound:
-          type: string
-        deferredSyntaxAllowedAsLiteral:
-          type: string
-        defaultContentType:
-          type: string
-        urlPatterns:
+        includePreludes:
           type: array
           items:
             type: string
@@ -2025,10 +2025,10 @@ components:
           type: object
         contextPath:
           type: string
-        sessionCookieConfig:
-          "$ref": "#/components/schemas/SessionCookieConfig"
         virtualServerName:
           type: string
+        sessionCookieConfig:
+          "$ref": "#/components/schemas/SessionCookieConfig"
         sessionTrackingModes:
           uniqueItems: true
           type: array
@@ -2046,23 +2046,19 @@ components:
           type: object
           additionalProperties:
             "$ref": "#/components/schemas/ServletRegistration"
-        serverInfo:
-          type: string
         servletContextName:
           type: string
         filterRegistrations:
           type: object
           additionalProperties:
             "$ref": "#/components/schemas/FilterRegistration"
-        defaultSessionTrackingModes:
-          uniqueItems: true
-          type: array
-          items:
-            type: string
-            enum:
-            - COOKIE
-            - URL
-            - SSL
+        requestCharacterEncoding:
+          type: string
+        responseCharacterEncoding:
+          type: string
+        effectiveMajorVersion:
+          type: integer
+          format: int32
         effectiveSessionTrackingModes:
           uniqueItems: true
           type: array
@@ -2072,18 +2068,22 @@ components:
             - COOKIE
             - URL
             - SSL
-        requestCharacterEncoding:
-          type: string
-        effectiveMajorVersion:
+        defaultSessionTrackingModes:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+            enum:
+            - COOKIE
+            - URL
+            - SSL
+        effectiveMinorVersion:
           type: integer
           format: int32
         jspConfigDescriptor:
           "$ref": "#/components/schemas/JspConfigDescriptor"
-        responseCharacterEncoding:
+        serverInfo:
           type: string
-        effectiveMinorVersion:
-          type: integer
-          format: int32
     ServletRegistration:
       type: object
       properties:
@@ -2127,9 +2127,9 @@ components:
     TaglibDescriptor:
       type: object
       properties:
-        taglibURI:
-          type: string
         taglibLocation:
+          type: string
+        taglibURI:
           type: string
     Animation:
       type: object
