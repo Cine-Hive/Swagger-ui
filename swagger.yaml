@@ -96,6 +96,34 @@ paths:
             "*/*":
               schema:
                 "$ref": "#/components/schemas/Board"
+  "/update_top_movie":
+    post:
+      tags:
+      - Movie Controller
+      summary: Top rated 영화 수동으로 DB에 저장
+      description: api로 받아온 topmovie 목록을 topmovie 테이블에 저장
+      operationId: getTopMovies
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: object
+  "/update_now_playing":
+    post:
+      tags:
+      - Movie Controller
+      summary: 현재 상영중인 영화 수동으로 DB에 저장
+      description: 현재 상영중인 영화 목록을 movie 테이블에 저장
+      operationId: getNowPlayingMovies
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: object
   "/search":
     post:
       tags:
@@ -526,21 +554,7 @@ paths:
             "*/*":
               schema:
                 type: string
-  "/top_movie":
-    get:
-      tags:
-      - Movie Controller
-      summary: Topmovie DB에 저장
-      description: api로 받아온 topmovie 목록을 topmovie 테이블에 저장
-      operationId: getTopMovies
-      responses:
-        '200':
-          description: OK
-          content:
-            "*/*":
-              schema:
-                type: object
-  "/now_playing_movies":
+  "/now_playing":
     get:
       tags:
       - Movie Controller
@@ -556,20 +570,6 @@ paths:
                 type: array
                 items:
                   "$ref": "#/components/schemas/Movie"
-  "/now_playing":
-    get:
-      tags:
-      - Movie Controller
-      summary: 현재 상영중인 영화 DB에 저장
-      description: 현재 상영중인 영화 목록을 movie 테이블에 저장
-      operationId: getNowPlayingMovies
-      responses:
-        '200':
-          description: OK
-          content:
-            "*/*":
-              schema:
-                type: object
   "/movies":
     get:
       tags:
@@ -1586,28 +1586,28 @@ components:
     ApplicationContext:
       type: object
       properties:
-        applicationName:
-          type: string
-        startupDate:
-          type: integer
-          format: int64
-        autowireCapableBeanFactory:
-          "$ref": "#/components/schemas/AutowireCapableBeanFactory"
         parent:
           "$ref": "#/components/schemas/ApplicationContext"
         id:
           type: string
         displayName:
           type: string
+        autowireCapableBeanFactory:
+          "$ref": "#/components/schemas/AutowireCapableBeanFactory"
+        applicationName:
+          type: string
+        startupDate:
+          type: integer
+          format: int64
         environment:
           "$ref": "#/components/schemas/Environment"
+        beanDefinitionCount:
+          type: integer
+          format: int32
         beanDefinitionNames:
           type: array
           items:
             type: string
-        beanDefinitionCount:
-          type: integer
-          format: int32
         parentBeanFactory:
           "$ref": "#/components/schemas/BeanFactory"
         classLoader:
@@ -1842,11 +1842,11 @@ components:
     FilterRegistration:
       type: object
       properties:
-        servletNameMappings:
+        urlPatternMappings:
           type: array
           items:
             type: string
-        urlPatternMappings:
+        servletNameMappings:
           type: array
           items:
             type: string
@@ -1863,15 +1863,15 @@ components:
       properties:
         error:
           type: boolean
-        is3xxRedirection:
-          type: boolean
-        is1xxInformational:
-          type: boolean
         is2xxSuccessful:
           type: boolean
         is4xxClientError:
           type: boolean
         is5xxServerError:
+          type: boolean
+        is1xxInformational:
+          type: boolean
+        is3xxRedirection:
           type: boolean
     JspConfigDescriptor:
       type: object
@@ -1891,34 +1891,34 @@ components:
           type: string
         defaultContentType:
           type: string
+        urlPatterns:
+          type: array
+          items:
+            type: string
+        scriptingInvalid:
+          type: string
+        errorOnUndeclaredNamespace:
+          type: string
+        deferredSyntaxAllowedAsLiteral:
+          type: string
+        errorOnELNotFound:
+          type: string
+        trimDirectiveWhitespaces:
+          type: string
+        pageEncoding:
+          type: string
+        isXml:
+          type: string
+        includePreludes:
+          type: array
+          items:
+            type: string
         elIgnored:
           type: string
         includeCodas:
           type: array
           items:
             type: string
-        isXml:
-          type: string
-        pageEncoding:
-          type: string
-        includePreludes:
-          type: array
-          items:
-            type: string
-        urlPatterns:
-          type: array
-          items:
-            type: string
-        errorOnELNotFound:
-          type: string
-        trimDirectiveWhitespaces:
-          type: string
-        errorOnUndeclaredNamespace:
-          type: string
-        scriptingInvalid:
-          type: string
-        deferredSyntaxAllowedAsLiteral:
-          type: string
     RedirectView:
       type: object
       properties:
@@ -1991,12 +1991,6 @@ components:
     ServletContext:
       type: object
       properties:
-        attributeNames:
-          type: object
-        contextPath:
-          type: string
-        initParameterNames:
-          type: object
         classLoader:
           type: object
           properties:
@@ -2042,6 +2036,12 @@ components:
         minorVersion:
           type: integer
           format: int32
+        attributeNames:
+          type: object
+        contextPath:
+          type: string
+        initParameterNames:
+          type: object
         sessionCookieConfig:
           "$ref": "#/components/schemas/SessionCookieConfig"
         virtualServerName:
@@ -2063,19 +2063,20 @@ components:
           type: object
           additionalProperties:
             "$ref": "#/components/schemas/ServletRegistration"
-        filterRegistrations:
-          type: object
-          additionalProperties:
-            "$ref": "#/components/schemas/FilterRegistration"
+        effectiveMinorVersion:
+          type: integer
+          format: int32
         effectiveMajorVersion:
           type: integer
           format: int32
+        responseCharacterEncoding:
+          type: string
+        servletContextName:
+          type: string
         requestCharacterEncoding:
           type: string
         jspConfigDescriptor:
           "$ref": "#/components/schemas/JspConfigDescriptor"
-        responseCharacterEncoding:
-          type: string
         effectiveSessionTrackingModes:
           uniqueItems: true
           type: array
@@ -2094,11 +2095,10 @@ components:
             - COOKIE
             - URL
             - SSL
-        effectiveMinorVersion:
-          type: integer
-          format: int32
-        servletContextName:
-          type: string
+        filterRegistrations:
+          type: object
+          additionalProperties:
+            "$ref": "#/components/schemas/FilterRegistration"
         serverInfo:
           type: string
     ServletRegistration:
@@ -2126,8 +2126,6 @@ components:
         maxAge:
           type: integer
           format: int32
-        httpOnly:
-          type: boolean
         name:
           type: string
         path:
@@ -2140,6 +2138,8 @@ components:
           type: string
           deprecated: true
         secure:
+          type: boolean
+        httpOnly:
           type: boolean
     TaglibDescriptor:
       type: object
