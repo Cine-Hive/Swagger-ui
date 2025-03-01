@@ -1548,11 +1548,11 @@ components:
           type: string
         displayName:
           type: string
-        applicationName:
-          type: string
         startupDate:
           type: integer
           format: int64
+        applicationName:
+          type: string
         autowireCapableBeanFactory:
           "$ref": "#/components/schemas/AutowireCapableBeanFactory"
         environment:
@@ -1787,11 +1787,11 @@ components:
     Environment:
       type: object
       properties:
-        activeProfiles:
+        defaultProfiles:
           type: array
           items:
             type: string
-        defaultProfiles:
+        activeProfiles:
           type: array
           items:
             type: string
@@ -1821,25 +1821,25 @@ components:
           type: boolean
         is2xxSuccessful:
           type: boolean
-        is4xxClientError:
-          type: boolean
         is5xxServerError:
           type: boolean
-        is1xxInformational:
+        is4xxClientError:
           type: boolean
         is3xxRedirection:
+          type: boolean
+        is1xxInformational:
           type: boolean
     JspConfigDescriptor:
       type: object
       properties:
-        taglibs:
-          type: array
-          items:
-            "$ref": "#/components/schemas/TaglibDescriptor"
         jspPropertyGroups:
           type: array
           items:
             "$ref": "#/components/schemas/JspPropertyGroupDescriptor"
+        taglibs:
+          type: array
+          items:
+            "$ref": "#/components/schemas/TaglibDescriptor"
     JspPropertyGroupDescriptor:
       type: object
       properties:
@@ -1853,27 +1853,27 @@ components:
             type: string
         isXml:
           type: string
-        includeCodas:
-          type: array
-          items:
-            type: string
-        pageEncoding:
-          type: string
         elIgnored:
           type: string
         includePreludes:
           type: array
           items:
             type: string
+        pageEncoding:
+          type: string
+        includeCodas:
+          type: array
+          items:
+            type: string
+        scriptingInvalid:
+          type: string
         errorOnUndeclaredNamespace:
+          type: string
+        errorOnELNotFound:
           type: string
         deferredSyntaxAllowedAsLiteral:
           type: string
         trimDirectiveWhitespaces:
-          type: string
-        errorOnELNotFound:
-          type: string
-        scriptingInvalid:
           type: string
     RedirectView:
       type: object
@@ -1992,12 +1992,12 @@ components:
         minorVersion:
           type: integer
           format: int32
+        contextPath:
+          type: string
         attributeNames:
           type: object
         initParameterNames:
           type: object
-        contextPath:
-          type: string
         virtualServerName:
           type: string
         sessionCookieConfig:
@@ -2019,6 +2019,29 @@ components:
           type: object
           additionalProperties:
             "$ref": "#/components/schemas/ServletRegistration"
+        serverInfo:
+          type: string
+        jspConfigDescriptor:
+          "$ref": "#/components/schemas/JspConfigDescriptor"
+        responseCharacterEncoding:
+          type: string
+        requestCharacterEncoding:
+          type: string
+        filterRegistrations:
+          type: object
+          additionalProperties:
+            "$ref": "#/components/schemas/FilterRegistration"
+        servletContextName:
+          type: string
+        defaultSessionTrackingModes:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+            enum:
+            - COOKIE
+            - URL
+            - SSL
         effectiveMajorVersion:
           type: integer
           format: int32
@@ -2031,32 +2054,9 @@ components:
             - COOKIE
             - URL
             - SSL
-        responseCharacterEncoding:
-          type: string
-        jspConfigDescriptor:
-          "$ref": "#/components/schemas/JspConfigDescriptor"
-        filterRegistrations:
-          type: object
-          additionalProperties:
-            "$ref": "#/components/schemas/FilterRegistration"
         effectiveMinorVersion:
           type: integer
           format: int32
-        servletContextName:
-          type: string
-        defaultSessionTrackingModes:
-          uniqueItems: true
-          type: array
-          items:
-            type: string
-            enum:
-            - COOKIE
-            - URL
-            - SSL
-        requestCharacterEncoding:
-          type: string
-        serverInfo:
-          type: string
     ServletRegistration:
       type: object
       properties:
@@ -2100,9 +2100,9 @@ components:
     TaglibDescriptor:
       type: object
       properties:
-        taglibURI:
-          type: string
         taglibLocation:
+          type: string
+        taglibURI:
           type: string
     Animation:
       type: object
