@@ -7,18 +7,28 @@ servers:
 - url: http://localhost:8081
   description: Generated server url
 tags:
+- name: NowPlaying Controller
+  description: 현재 상영중인 영화 기능을 제공하는 API
 - name: Kakao User Controller
   description: 카카오 로그인 API 관련 기능을 제공하는 API
 - name: Animation Controller
   description: 애니메이션 정보 관련 기능을 제공하는 API
+- name: UpComing Movie Controller
+  description: 개봉 예정인 영화 기능을 제공하는 API
 - name: DisLike Controller
   description: 게시글의 싫어요를 등록, 취소 및 싫어요 수 조회 기능을 제공하는 API
 - name: Like Controller
   description: 게시글의 좋아요를 등록, 취소 및 좋아요 수 조회 기능을 제공하는 API
 - name: Report Controller
   description: 게시글의 신고하기 기능을 제공하는 API
+- name: Search Controller
+  description: 드라마 & 영화 & 애니메이션 검색 기능을 제공하는 API
+- name: Popular Movie Controller
+  description: 인기 영화 기능을 제공하는 API
 - name: Board Controller
   description: 게시글 CRUD, 검색, 전체 조회 기능을 제공하는 API
+- name: TopMovie Controller
+  description: 평점 순위 영화 기능을 제공하는 API
 - name: Google User Controller
   description: 구글 로그인 API 관련 기능을 제공하는 API
 - name: Naver User Controller
@@ -96,13 +106,41 @@ paths:
             "*/*":
               schema:
                 "$ref": "#/components/schemas/Board"
+  "/update_upcoming_movie":
+    post:
+      tags:
+      - UpComing Movie Controller
+      summary: 개봉 예정중인 영화 수동으로 DB에 저장
+      description: API로 받아온 개봉 예정인 영화 목록을 upcoming 테이블에 저장
+      operationId: getUpComingMovies
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: object
   "/update_top_movie":
     post:
       tags:
-      - Movie Controller
+      - TopMovie Controller
       summary: 평점 순위 영화 수동으로 DB에 저장
-      description: api로 받아온 topmovie 목록을 topmovie 테이블에 저장
+      description: api로 받아온 평점 순위 영화 목록을 topmovie 테이블에 저장
       operationId: getTopMovies
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: object
+  "/update_popular_movie":
+    post:
+      tags:
+      - Popular Movie Controller
+      summary: 인기 영화 수동으로 DB에 저장
+      description: API로 받아온 인기 영화 목록을 popular 테이블에 저장
+      operationId: getPopularMovies
       responses:
         '200':
           description: OK
@@ -113,7 +151,7 @@ paths:
   "/update_now_playing":
     post:
       tags:
-      - Movie Controller
+      - NowPlaying Controller
       summary: 현재 상영중인 영화 수동으로 DB에 저장
       description: 현재 상영중인 영화 목록을 movie 테이블에 저장
       operationId: getNowPlayingMovies
@@ -127,7 +165,7 @@ paths:
   "/search":
     post:
       tags:
-      - Movie Controller
+      - Search Controller
       summary: 클라이언트 검색
       description: 검색어를 받아 해당 검색어를 포함하는 Moive(animation 제외), 드라마(애니메이션 제외), 애니메이션을
         반환
@@ -166,11 +204,12 @@ paths:
         required: true
         schema:
           type: string
-      - name: reason
-        in: query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
         required: true
-        schema:
-          type: string
       responses:
         '200':
           description: OK
@@ -559,7 +598,7 @@ paths:
   "/now_playing":
     get:
       tags:
-      - Movie Controller
+      - NowPlaying Controller
       summary: 현재 상영중인 영화 조회
       description: movie 테이블에 저장된 movie 정보를 리스트 형태로 반환
       operationId: getNowPlayingMoviesList
@@ -631,12 +670,12 @@ paths:
               schema:
                 type: integer
                 format: int32
-  "/get_topmovies":
+  "/get_upcoming_movies":
     get:
       tags:
-      - Movie Controller
-      summary: 평점순 영화 조회
-      description: topmovie 테이블에 저장된 topmovie 정보를 리스트 형태로 반환
+      - UpComing Movie Controller
+      summary: 개봉 예정중인 영화 조회
+      description: upcoming 테이블에 저장된 개봉 예정 영화 정보를 리스트 형태로 반환
       operationId: getTopRatedMoviesList
       responses:
         '200':
@@ -646,7 +685,39 @@ paths:
               schema:
                 type: array
                 items:
+                  "$ref": "#/components/schemas/UpComingMovieDto"
+  "/get_topmovies":
+    get:
+      tags:
+      - TopMovie Controller
+      summary: 평점순 영화 조회
+      description: topmovie 테이블에 저장된 topmovie 정보를 리스트 형태로 반환
+      operationId: getTopRatedMoviesList_1
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
                   "$ref": "#/components/schemas/TopRatedMovieDto"
+  "/get_popular_movies":
+    get:
+      tags:
+      - Popular Movie Controller
+      summary: 인기 영화 조회
+      description: popular 테이블에 저장된 인기 영화 정보를 리스트 형태로 반환
+      operationId: getTopRatedMoviesList_2
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/PopularMovieDto"
   "/dramas":
     get:
       tags:
@@ -1373,7 +1444,7 @@ components:
           format: int64
         name:
           type: string
-        posterUrl:
+        posterPath:
           type: string
     Director:
       type: object
@@ -1381,6 +1452,14 @@ components:
         id:
           type: integer
           format: int64
+        name:
+          type: string
+    Genre:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
         name:
           type: string
     Movie:
@@ -1395,14 +1474,15 @@ components:
           type: string
         posterPath:
           type: string
+        backDropPath:
+          type: string
         releaseDate:
           type: string
           format: date
-        genreIds:
+        genres:
           type: array
           items:
-            type: integer
-            format: int32
+            "$ref": "#/components/schemas/Genre"
         voteAverage:
           type: number
           format: double
@@ -1419,6 +1499,9 @@ components:
             "$ref": "#/components/schemas/Video"
         director:
           "$ref": "#/components/schemas/Director"
+        runtime:
+          type: integer
+          format: int32
     Video:
       type: object
       properties:
@@ -1429,7 +1512,23 @@ components:
           type: string
         name:
           type: string
+    UpComingMovieDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        posterPath:
+          type: string
     TopRatedMovieDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        posterPath:
+          type: string
+    PopularMovieDto:
       type: object
       properties:
         id:
@@ -1449,6 +1548,8 @@ components:
           type: string
         posterPath:
           type: string
+        backDropPath:
+          type: string
         firstAirDate:
           type: string
         voteAverage:
@@ -1461,11 +1562,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/Director"
-        genreIds:
+        genres:
           type: array
           items:
-            type: integer
-            format: int32
+            "$ref": "#/components/schemas/Genre"
         actors:
           type: array
           items:
@@ -1494,6 +1594,18 @@ components:
     BoardSearchDto:
       type: object
       properties:
+        id:
+          type: integer
+          format: int64
+        brgRedDate:
+          type: string
+          format: date-time
+        likeCount:
+          type: integer
+          format: int32
+        views:
+          type: integer
+          format: int32
         brdTitle:
           type: string
         brdContent:
@@ -1548,22 +1660,22 @@ components:
           type: string
         displayName:
           type: string
+        applicationName:
+          type: string
         startupDate:
           type: integer
           format: int64
-        applicationName:
-          type: string
         autowireCapableBeanFactory:
           "$ref": "#/components/schemas/AutowireCapableBeanFactory"
         environment:
           "$ref": "#/components/schemas/Environment"
+        beanDefinitionCount:
+          type: integer
+          format: int32
         beanDefinitionNames:
           type: array
           items:
             type: string
-        beanDefinitionCount:
-          type: integer
-          format: int32
         parentBeanFactory:
           "$ref": "#/components/schemas/BeanFactory"
         classLoader:
@@ -1787,11 +1899,11 @@ components:
     Environment:
       type: object
       properties:
-        defaultProfiles:
+        activeProfiles:
           type: array
           items:
             type: string
-        activeProfiles:
+        defaultProfiles:
           type: array
           items:
             type: string
@@ -1819,30 +1931,54 @@ components:
       properties:
         error:
           type: boolean
+        is1xxInformational:
+          type: boolean
+        is3xxRedirection:
+          type: boolean
         is2xxSuccessful:
           type: boolean
         is5xxServerError:
           type: boolean
         is4xxClientError:
           type: boolean
-        is3xxRedirection:
-          type: boolean
-        is1xxInformational:
-          type: boolean
     JspConfigDescriptor:
       type: object
       properties:
-        jspPropertyGroups:
-          type: array
-          items:
-            "$ref": "#/components/schemas/JspPropertyGroupDescriptor"
         taglibs:
           type: array
           items:
             "$ref": "#/components/schemas/TaglibDescriptor"
+        jspPropertyGroups:
+          type: array
+          items:
+            "$ref": "#/components/schemas/JspPropertyGroupDescriptor"
     JspPropertyGroupDescriptor:
       type: object
       properties:
+        includeCodas:
+          type: array
+          items:
+            type: string
+        elIgnored:
+          type: string
+        isXml:
+          type: string
+        includePreludes:
+          type: array
+          items:
+            type: string
+        pageEncoding:
+          type: string
+        errorOnUndeclaredNamespace:
+          type: string
+        errorOnELNotFound:
+          type: string
+        deferredSyntaxAllowedAsLiteral:
+          type: string
+        scriptingInvalid:
+          type: string
+        trimDirectiveWhitespaces:
+          type: string
         buffer:
           type: string
         defaultContentType:
@@ -1851,30 +1987,6 @@ components:
           type: array
           items:
             type: string
-        isXml:
-          type: string
-        elIgnored:
-          type: string
-        includePreludes:
-          type: array
-          items:
-            type: string
-        pageEncoding:
-          type: string
-        includeCodas:
-          type: array
-          items:
-            type: string
-        scriptingInvalid:
-          type: string
-        errorOnUndeclaredNamespace:
-          type: string
-        errorOnELNotFound:
-          type: string
-        deferredSyntaxAllowedAsLiteral:
-          type: string
-        trimDirectiveWhitespaces:
-          type: string
     RedirectView:
       type: object
       properties:
@@ -1928,10 +2040,13 @@ components:
           type: array
           items:
             type: string
-        redirectView:
-          type: boolean
         propagateQueryProperties:
           type: boolean
+        redirectView:
+          type: boolean
+        attributesCSV:
+          type: string
+          writeOnly: true
         attributes:
           type: object
           additionalProperties:
@@ -1941,9 +2056,6 @@ components:
           type: object
           additionalProperties:
             type: object
-        attributesCSV:
-          type: string
-          writeOnly: true
     ServletContext:
       type: object
       properties:
@@ -1992,16 +2104,21 @@ components:
         minorVersion:
           type: integer
           format: int32
-        contextPath:
-          type: string
         attributeNames:
           type: object
+        contextPath:
+          type: string
         initParameterNames:
           type: object
-        virtualServerName:
+        sessionTimeout:
+          type: integer
+          format: int32
+        serverInfo:
           type: string
         sessionCookieConfig:
           "$ref": "#/components/schemas/SessionCookieConfig"
+        virtualServerName:
+          type: string
         sessionTrackingModes:
           uniqueItems: true
           type: array
@@ -2012,25 +2129,16 @@ components:
             - COOKIE
             - URL
             - SSL
-        sessionTimeout:
-          type: integer
-          format: int32
         servletRegistrations:
           type: object
           additionalProperties:
             "$ref": "#/components/schemas/ServletRegistration"
-        serverInfo:
-          type: string
-        jspConfigDescriptor:
-          "$ref": "#/components/schemas/JspConfigDescriptor"
-        responseCharacterEncoding:
-          type: string
-        requestCharacterEncoding:
-          type: string
         filterRegistrations:
           type: object
           additionalProperties:
             "$ref": "#/components/schemas/FilterRegistration"
+        requestCharacterEncoding:
+          type: string
         servletContextName:
           type: string
         defaultSessionTrackingModes:
@@ -2042,6 +2150,8 @@ components:
             - COOKIE
             - URL
             - SSL
+        responseCharacterEncoding:
+          type: string
         effectiveMajorVersion:
           type: integer
           format: int32
@@ -2057,6 +2167,8 @@ components:
         effectiveMinorVersion:
           type: integer
           format: int32
+        jspConfigDescriptor:
+          "$ref": "#/components/schemas/JspConfigDescriptor"
     ServletRegistration:
       type: object
       properties:
@@ -2077,6 +2189,11 @@ components:
     SessionCookieConfig:
       type: object
       properties:
+        domain:
+          type: string
+        maxAge:
+          type: integer
+          format: int32
         name:
           type: string
         path:
@@ -2088,11 +2205,6 @@ components:
         comment:
           type: string
           deprecated: true
-        domain:
-          type: string
-        maxAge:
-          type: integer
-          format: int32
         secure:
           type: boolean
         httpOnly:
@@ -2116,6 +2228,8 @@ components:
           type: string
         posterPath:
           type: string
+        backDropPath:
+          type: string
         releaseDate:
           type: string
           format: date
@@ -2125,11 +2239,10 @@ components:
         popularity:
           type: number
           format: double
-        genreIds:
+        genres:
           type: array
           items:
-            type: integer
-            format: int32
+            "$ref": "#/components/schemas/Genre"
         directors:
           type: array
           items:
