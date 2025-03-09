@@ -265,6 +265,8 @@ paths:
     post:
       tags:
       - User Controller
+      summary: 로그인
+      description: user 테이블에 사용자가 입력한 ID와 비밀번호 쌍이 맞는지 확인 후 로그인
       operationId: login
       requestBody:
         content:
@@ -573,26 +575,6 @@ paths:
             "*/*":
               schema:
                 type: string
-  "/api/auth/kakao/authenticate":
-    post:
-      tags:
-      - Kakao User Controller
-      summary: 카카오 OAuth 로그인 후 인증 처리
-      description: 카카오 로그인 후 클라이언트에서 보낸 access_token을 통해 사용자를 인증
-      operationId: authenticateUser
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: string
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            "*/*":
-              schema:
-                type: object
   "/api/auth/google/register":
     post:
       tags:
@@ -666,6 +648,29 @@ paths:
             "*/*":
               schema:
                 "$ref": "#/components/schemas/Movie"
+  "/movies/{id}/similar":
+    get:
+      tags:
+      - Movie Controller
+      summary: 관련 추천 영화 조회
+      description: 특정 영화 ID로 TMDB의 추천 영화 목록을 가져옴
+      operationId: getSimilarMovies
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Movie"
   "/like/{boardId}/count":
     get:
       tags:
@@ -1162,6 +1167,29 @@ paths:
             "*/*":
               schema:
                 "$ref": "#/components/schemas/Animation"
+  "/animations/{id}/similar":
+    get:
+      tags:
+      - Animation Controller
+      summary: 관련 추천 애니메이션 조회
+      description: 특정 애니메이션 ID로 TMDB의 추천 애니메이션 목록을 가져옴
+      operationId: getSimilarAnimations
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Animation"
   "/comment/board/{boardId}/delete/{commentId}":
     delete:
       tags:
@@ -1520,6 +1548,11 @@ components:
         runtime:
           type: integer
           format: int32
+        recommendedMovieIds:
+          type: array
+          items:
+            type: integer
+            format: int64
     Video:
       type: object
       properties:
@@ -1680,20 +1713,20 @@ components:
           type: string
         autowireCapableBeanFactory:
           "$ref": "#/components/schemas/AutowireCapableBeanFactory"
-        applicationName:
-          type: string
         startupDate:
           type: integer
           format: int64
+        applicationName:
+          type: string
         environment:
           "$ref": "#/components/schemas/Environment"
+        beanDefinitionCount:
+          type: integer
+          format: int32
         beanDefinitionNames:
           type: array
           items:
             type: string
-        beanDefinitionCount:
-          type: integer
-          format: int32
         parentBeanFactory:
           "$ref": "#/components/schemas/BeanFactory"
         classLoader:
@@ -1928,11 +1961,11 @@ components:
     FilterRegistration:
       type: object
       properties:
-        servletNameMappings:
+        urlPatternMappings:
           type: array
           items:
             type: string
-        urlPatternMappings:
+        servletNameMappings:
           type: array
           items:
             type: string
@@ -1951,13 +1984,13 @@ components:
           type: boolean
         is2xxSuccessful:
           type: boolean
-        is5xxServerError:
-          type: boolean
         is4xxClientError:
           type: boolean
-        is3xxRedirection:
+        is5xxServerError:
           type: boolean
         is1xxInformational:
+          type: boolean
+        is3xxRedirection:
           type: boolean
     JspConfigDescriptor:
       type: object
@@ -1981,29 +2014,29 @@ components:
           type: array
           items:
             type: string
-        includePreludes:
-          type: array
-          items:
-            type: string
         isXml:
           type: string
         elIgnored:
           type: string
-        pageEncoding:
-          type: string
+        includePreludes:
+          type: array
+          items:
+            type: string
         includeCodas:
           type: array
           items:
             type: string
-        deferredSyntaxAllowedAsLiteral:
+        pageEncoding:
           type: string
         trimDirectiveWhitespaces:
           type: string
-        scriptingInvalid:
-          type: string
         errorOnUndeclaredNamespace:
           type: string
+        scriptingInvalid:
+          type: string
         errorOnELNotFound:
+          type: string
+        deferredSyntaxAllowedAsLiteral:
           type: string
     RedirectView:
       type: object
@@ -2062,17 +2095,17 @@ components:
           type: boolean
         propagateQueryProperties:
           type: boolean
-        attributes:
-          type: object
-          additionalProperties:
-            type: string
-          writeOnly: true
         attributesMap:
           type: object
           additionalProperties:
             type: object
         attributesCSV:
           type: string
+          writeOnly: true
+        attributes:
+          type: object
+          additionalProperties:
+            type: string
           writeOnly: true
     ServletContext:
       type: object
@@ -2124,10 +2157,14 @@ components:
           format: int32
         attributeNames:
           type: object
-        contextPath:
-          type: string
         initParameterNames:
           type: object
+        contextPath:
+          type: string
+        virtualServerName:
+          type: string
+        sessionCookieConfig:
+          "$ref": "#/components/schemas/SessionCookieConfig"
         sessionTrackingModes:
           uniqueItems: true
           type: array
@@ -2138,10 +2175,6 @@ components:
             - COOKIE
             - URL
             - SSL
-        sessionCookieConfig:
-          "$ref": "#/components/schemas/SessionCookieConfig"
-        virtualServerName:
-          type: string
         sessionTimeout:
           type: integer
           format: int32
@@ -2149,30 +2182,17 @@ components:
           type: object
           additionalProperties:
             "$ref": "#/components/schemas/ServletRegistration"
-        defaultSessionTrackingModes:
-          uniqueItems: true
-          type: array
-          items:
-            type: string
-            enum:
-            - COOKIE
-            - URL
-            - SSL
-        effectiveMinorVersion:
+        effectiveMajorVersion:
           type: integer
           format: int32
-        responseCharacterEncoding:
-          type: string
-        servletContextName:
-          type: string
         filterRegistrations:
           type: object
           additionalProperties:
             "$ref": "#/components/schemas/FilterRegistration"
+        responseCharacterEncoding:
+          type: string
         requestCharacterEncoding:
           type: string
-        jspConfigDescriptor:
-          "$ref": "#/components/schemas/JspConfigDescriptor"
         effectiveSessionTrackingModes:
           uniqueItems: true
           type: array
@@ -2182,9 +2202,22 @@ components:
             - COOKIE
             - URL
             - SSL
-        effectiveMajorVersion:
+        servletContextName:
+          type: string
+        effectiveMinorVersion:
           type: integer
           format: int32
+        defaultSessionTrackingModes:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+            enum:
+            - COOKIE
+            - URL
+            - SSL
+        jspConfigDescriptor:
+          "$ref": "#/components/schemas/JspConfigDescriptor"
         serverInfo:
           type: string
     ServletRegistration:
@@ -2218,8 +2251,6 @@ components:
         comment:
           type: string
           deprecated: true
-        domain:
-          type: string
         maxAge:
           type: integer
           format: int32
@@ -2227,12 +2258,14 @@ components:
           type: boolean
         httpOnly:
           type: boolean
+        domain:
+          type: string
     TaglibDescriptor:
       type: object
       properties:
-        taglibURI:
-          type: string
         taglibLocation:
+          type: string
+        taglibURI:
           type: string
     Animation:
       type: object
@@ -2257,6 +2290,9 @@ components:
         popularity:
           type: number
           format: double
+        runtime:
+          type: integer
+          format: int32
         genres:
           type: array
           items:
@@ -2269,3 +2305,8 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/Video"
+        recommendedAnimationIds:
+          type: array
+          items:
+            type: integer
+            format: int64
