@@ -9,12 +9,12 @@ servers:
 tags:
 - name: NowPlaying Controller
   description: 현재 상영중인 영화 기능을 제공하는 API
-- name: Kakao User Controller
-  description: 카카오 로그인 API 관련 기능을 제공하는 API
 - name: Animation Controller
   description: 애니메이션 정보 관련 기능을 제공하는 API
 - name: UpComing Movie Controller
   description: 개봉 예정인 영화 기능을 제공하는 API
+- name: Naver User App Controller
+  description: 네이버 앱 로그인 API 관련 기능을 제공하는 API
 - name: DisLike Controller
   description: 게시글의 싫어요를 등록, 취소 및 싫어요 수 조회 기능을 제공하는 API
 - name: Like Controller
@@ -33,6 +33,8 @@ tags:
   description: 구글 로그인 API 관련 기능을 제공하는 API
 - name: Naver User Controller
   description: 네이버 로그인 API 관련 기능을 제공하는 API
+- name: Kakao User App Controller
+  description: 카카오 앱 로그인 API 관련 기능을 제공하는 API
 - name: Drama Controller
   description: 드라마 정보 관련 기능을 제공하는 API
 - name: Preferred Genre Controller
@@ -45,6 +47,8 @@ tags:
   description: 게시글의 즐겨찾기를 등록, 취소 및 전체 갯수 조회 기능을 제공하는 API
 - name: Comment Controller
   description: '게시글 댓글의 CURD 기능을 제공하는 API '
+- name: Google User App Controller
+  description: 구글 앱 로그인 API 관련 기능을 제공하는 API
 paths:
   "/comment/board/{boardId}/update/{commentId}":
     put:
@@ -210,6 +214,124 @@ paths:
             schema:
               type: string
         required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: string
+  "/reply":
+    post:
+      tags:
+      - reply-controller
+      operationId: createReply
+      parameters:
+      - name: memNickname
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: memEmail
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: movieId
+        in: query
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: content
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: object
+  "/reply/judge/like":
+    post:
+      tags:
+      - reply-judge-controller
+      operationId: toggleLike
+      parameters:
+      - name: memEmail
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: movieId
+        in: query
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: replyId
+        in: query
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: string
+  "/reply/judge/dislike":
+    post:
+      tags:
+      - reply-judge-controller
+      operationId: toggleDislike
+      parameters:
+      - name: memEmail
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: movieId
+        in: query
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: replyId
+        in: query
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: string
+  "/reply/bookmark/toggle":
+    post:
+      tags:
+      - reply-bookmark-controller
+      operationId: toggleBookmark
+      parameters:
+      - name: memEmail
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: movieId
+        in: query
+        required: true
+        schema:
+          type: integer
+          format: int64
       responses:
         '200':
           description: OK
@@ -488,30 +610,10 @@ paths:
             "*/*":
               schema:
                 "$ref": "#/components/schemas/Board"
-  "/api/auth/session":
-    post:
-      tags:
-      - Kakao User Controller
-      summary: 세션 생성
-      description: 카카오 로그인 후 인증된 사용자의 정보를 세션에 저장
-      operationId: createSession
-      requestBody:
-        content:
-          application/json:
-            schema:
-              "$ref": "#/components/schemas/KakaoUserInfo"
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            "*/*":
-              schema:
-                type: object
   "/api/auth/naver/register":
     post:
       tags:
-      - Naver User Controller
+      - Naver User App Controller
       summary: 네이버 사용자 등록
       description: 네이버 사용자 정보를 입력받아 회원가입을 진행, 중복 검사 통과 후 naver_user 테이블에 저장
       operationId: registerUserDetails
@@ -528,26 +630,20 @@ paths:
             "*/*":
               schema:
                 type: string
-  "/api/auth/logout":
-    get:
-      tags:
-      - Kakao User Controller
-      summary: 로그아웃 후 리다이렉션
-      description: 로그아웃 후 클라이언트를 로그인 페이지로 리다이렉션
-      operationId: handleLogoutRedirect
-      responses:
-        '200':
-          description: OK
-          content:
-            "*/*":
-              schema:
-                "$ref": "#/components/schemas/RedirectView"
+  "/api/auth/naver/app-login":
     post:
       tags:
-      - Kakao User Controller
-      summary: 카카오 로그아웃
-      description: 카카오 로그아웃을 위한 URL을 반환, 클라이언트에서 이 URL을 호출하여 로그아웃
-      operationId: logout
+      - Naver User App Controller
+      summary: 네이버 앱 로그인
+      description: '앱에서 SDK를 실행 후 인증 및 로그인이 성공된 후, 앱에서 Access Token을 담아서 요청을 보내면 서버에서
+        json 데이터를 클라이언트에게 보내야 할 요청코드 '
+      operationId: naverAppLogin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: true
       responses:
         '200':
           description: OK
@@ -558,9 +654,9 @@ paths:
   "/api/auth/kakao/register":
     post:
       tags:
-      - Kakao User Controller
+      - Kakao User App Controller
       summary: 카카오 사용자 회원가입
-      description: 카카오 로그인 후, 사용자가 추가 정보를 입력하면 이를 기반으로  kakao_user 테이블에 저장
+      description: 카카오 로그인 후, 사용자가 추가 정보를 입력하면 이를 기반으로 사용자 정보를 저장
       operationId: registerUserDetails_1
       requestBody:
         content:
@@ -575,12 +671,30 @@ paths:
             "*/*":
               schema:
                 type: string
+  "/api/auth/kakao/app-login":
+    post:
+      tags:
+      - Kakao User App Controller
+      operationId: kakaoAppLogin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: object
   "/api/auth/google/register":
     post:
       tags:
-      - Google User Controller
-      summary: 구글 회원가입
-      description: 사용자가 제공한 정보로 회원가입하고 google_user 테이블에 저장
+      - Google User App Controller
+      summary: 구글 사용자 회원가입
+      description: 구글 로그인 후, 사용자가 추가 정보를 입력하면 이를 기반으로 사용자 정보를 저장
       operationId: registerUserDetails_2
       requestBody:
         content:
@@ -595,6 +709,128 @@ paths:
             "*/*":
               schema:
                 type: string
+  "/api/auth/google/app-login":
+    post:
+      tags:
+      - Google User App Controller
+      summary: 구글 앱 로그인
+      description: '앱에서 SDK를 실행 후 인증 및 로그인이 성공된 후, 앱에서 Access Token을 담아서 요청을 보내면 서버에서
+        json 데이터를 클라이언트에게 보내야 할 요청코드 '
+      operationId: kakaoAppLogin_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: object
+  "/reply/user/{email}":
+    get:
+      tags:
+      - reply-controller
+      operationId: getReplysByMemEmail
+      parameters:
+      - name: email
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Reply"
+  "/reply/movie/{movieId}":
+    get:
+      tags:
+      - reply-controller
+      operationId: getReplysByMovie
+      parameters:
+      - name: movieId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Reply"
+  "/reply/judge/count/like":
+    get:
+      tags:
+      - reply-judge-controller
+      operationId: getLikeCount
+      parameters:
+      - name: replyId
+        in: query
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: integer
+                format: int64
+  "/reply/judge/count/dislike":
+    get:
+      tags:
+      - reply-judge-controller
+      operationId: getDisLikeCount
+      parameters:
+      - name: replyId
+        in: query
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: integer
+                format: int64
+  "/reply/bookmark/count":
+    get:
+      tags:
+      - reply-bookmark-controller
+      operationId: getBookmarkCount
+      parameters:
+      - name: movieId
+        in: query
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: integer
+                format: int64
   "/now_playing":
     get:
       tags:
@@ -677,7 +913,7 @@ paths:
       - Like Controller
       summary: 좋아요 갯수 조회
       description: 특정 게시글에 대해 좋아요의 전체 갯수를 조회
-      operationId: getLikeCount
+      operationId: getLikeCount_1
       parameters:
       - name: boardId
         in: path
@@ -784,7 +1020,7 @@ paths:
       - DisLike Controller
       summary: 싫어요 갯수 조회
       description: 특정 게시글에 대해 싫어요의 총 갯수를 조회
-      operationId: getDisLikeCount
+      operationId: getDisLikeCount_1
       parameters:
       - name: boardId
         in: path
@@ -869,7 +1105,7 @@ paths:
       - Bookmark Controller
       summary: '즐겨찾기 수 조회 '
       description: 특정 게시글에 대해 전체 즐겨찾기 수 조회
-      operationId: getBookmarkCount
+      operationId: getBookmarkCount_1
       parameters:
       - name: boardId
         in: path
@@ -968,26 +1204,20 @@ paths:
             "*/*":
               schema:
                 type: object
-  "/api/auth/naver/check-user":
+  "/api/auth/naver/login/success":
     get:
       tags:
       - Naver User Controller
-      summary: 네이버 사용자 중복 확인
-      description: 해당 네이버 ID가 이미 등록되어 있는지 확인
-      operationId: checkUser
-      parameters:
-      - name: naverId
-        in: query
-        required: true
-        schema:
-          type: string
+      summary: 네이버 로그인 성공 정보 반환
+      description: 세션에서 네이버 로그인한 사용자 정보를 가져와 반환, 인증되지 않은 사용자는 401 오류를 반환
+      operationId: loginSuccessPage
       responses:
         '200':
           description: OK
           content:
             "*/*":
               schema:
-                type: boolean
+                type: object
   "/api/auth/naver/callback":
     get:
       tags:
@@ -1012,7 +1242,7 @@ paths:
   "/api/auth/kakao":
     get:
       tags:
-      - Kakao User Controller
+      - request-kakao-web-controller
       summary: 카카오 로그인
       description: 카카오 OAuth 로그인 페이지로 사용자를 리다이렉션하여 카카오 인증을 시작
       operationId: kakaoLogin
@@ -1022,7 +1252,7 @@ paths:
   "/api/auth/kakao/success":
     get:
       tags:
-      - Kakao User Controller
+      - request-kakao-web-controller
       summary: 카카오 로그인 성공 정보 반환
       description: 세션에서 카카오 로그인한 사용자 정보를 가져와 반환, 인증되지 않은 사용자는 401 오류를 반환
       operationId: successPage
@@ -1033,30 +1263,24 @@ paths:
             "*/*":
               schema:
                 type: object
-  "/api/auth/kakao/check-user":
+  "/api/auth/kakao/login/success":
     get:
       tags:
-      - Kakao User Controller
-      summary: 카카오 사용자 중복 확인
-      description: 카카오 사용자 ID를 이용하여 사용자가 이미 존재하는지 확인
-      operationId: checkUser_1
-      parameters:
-      - name: kakaoId
-        in: query
-        required: true
-        schema:
-          type: string
+      - request-kakao-web-controller
+      summary: 카카오 로그인 성공 정보 반환
+      description: 세션에서 카카오 로그인한 사용자 정보를 가져와 반환, 인증되지 않은 사용자는 401 오류를 반환
+      operationId: loginSuccessPage_1
       responses:
         '200':
           description: OK
           content:
             "*/*":
               schema:
-                type: boolean
+                type: object
   "/api/auth/kakao/callback":
     get:
       tags:
-      - Kakao User Controller
+      - request-kakao-web-controller
       summary: 카카오 OAuth 로그인 및 사용자 등록
       description: 카카오 OAuth 인증 후 사용자 정보를 이용하여 로그인하거나, 신규 사용자를 등록하고 로그인 후 사용자를 리다이렉션
       operationId: kakaoCallback
@@ -1094,31 +1318,25 @@ paths:
             "*/*":
               schema:
                 type: object
-  "/api/auth/google/check-user":
+  "/api/auth/google/login/success":
     get:
       tags:
       - Google User Controller
-      summary: 구글 사용자 중복 확인
-      description: 해당 구글 ID가 이미 등록되어 있는지 확인
-      operationId: checkUser_2
-      parameters:
-      - name: googleId
-        in: query
-        required: true
-        schema:
-          type: string
+      summary: 구글 로그인 성공 정보 반환
+      description: 세션에서 구글 로그인한 사용자 정보를 가져와 반환, 인증되지 않은 사용자는 401 오류를 반환
+      operationId: loginSuccessPage_2
       responses:
         '200':
           description: OK
           content:
             "*/*":
               schema:
-                type: boolean
+                type: object
   "/api/auth/google/callback":
     get:
       tags:
       - Google User Controller
-      summary: 구글 OAuth 로그린 및 사용자 등록
+      summary: 구글 OAuth 로그인 및 사용자 등록
       description: 구글 OAuth 인증 후 구글 사용자 정보를 이용하여 로그인하거나 신규 사용자를 등록, 인증 후 해당 사용자를 리다이렉션
       operationId: googleCallback
       parameters:
@@ -1190,6 +1408,27 @@ paths:
                 type: array
                 items:
                   "$ref": "#/components/schemas/Animation"
+  "/reply/{movieId}/{replyId}":
+    delete:
+      tags:
+      - reply-controller
+      operationId: deleteReply
+      parameters:
+      - name: movieId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: replyId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
   "/comment/board/{boardId}/delete/{commentId}":
     delete:
       tags:
@@ -1358,6 +1597,22 @@ components:
         createdAt:
           type: string
           format: date-time
+    LoginHistory:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        user:
+          "$ref": "#/components/schemas/User"
+        firstLoginDate:
+          type: string
+          format: date-time
+        lastLoginDate:
+          type: string
+          format: date-time
+        browser:
+          type: string
     Report:
       type: object
       properties:
@@ -1398,6 +1653,10 @@ components:
           type: array
           items:
             type: string
+        loginHistories:
+          type: array
+          items:
+            "$ref": "#/components/schemas/LoginHistory"
     UserDto:
       type: object
       properties:
@@ -1461,19 +1720,24 @@ components:
           type: string
         brdContent:
           type: string
-    KakaoUserInfo:
+    Reply:
       type: object
       properties:
+        id:
+          type: integer
+          format: int64
         memEmail:
+          type: string
+        movieId:
+          type: integer
+          format: int64
+        reviewContent:
           type: string
         memNickname:
           type: string
-        memName:
+        replyRegDate:
           type: string
-        genres:
-          type: array
-          items:
-            type: string
+          format: date-time
     NowPlayingMovieDto:
       type: object
       properties:
@@ -1702,571 +1966,6 @@ components:
         views:
           type: integer
           format: int32
-    ApplicationContext:
-      type: object
-      properties:
-        parent:
-          "$ref": "#/components/schemas/ApplicationContext"
-        id:
-          type: string
-        displayName:
-          type: string
-        autowireCapableBeanFactory:
-          "$ref": "#/components/schemas/AutowireCapableBeanFactory"
-        startupDate:
-          type: integer
-          format: int64
-        applicationName:
-          type: string
-        environment:
-          "$ref": "#/components/schemas/Environment"
-        beanDefinitionCount:
-          type: integer
-          format: int32
-        beanDefinitionNames:
-          type: array
-          items:
-            type: string
-        parentBeanFactory:
-          "$ref": "#/components/schemas/BeanFactory"
-        classLoader:
-          type: object
-          properties:
-            name:
-              type: string
-            registeredAsParallelCapable:
-              type: boolean
-            parent:
-              type: object
-              properties:
-                name:
-                  type: string
-                registeredAsParallelCapable:
-                  type: boolean
-                unnamedModule:
-                  type: object
-                  properties:
-                    name:
-                      type: string
-                    classLoader:
-                      type: object
-                      properties:
-                        name:
-                          type: string
-                        registeredAsParallelCapable:
-                          type: boolean
-                        definedPackages:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              name:
-                                type: string
-                              annotations:
-                                type: array
-                                items:
-                                  type: object
-                              declaredAnnotations:
-                                type: array
-                                items:
-                                  type: object
-                              sealed:
-                                type: boolean
-                              specificationTitle:
-                                type: string
-                              specificationVersion:
-                                type: string
-                              specificationVendor:
-                                type: string
-                              implementationTitle:
-                                type: string
-                              implementationVersion:
-                                type: string
-                              implementationVendor:
-                                type: string
-                        defaultAssertionStatus:
-                          type: boolean
-                          writeOnly: true
-                    descriptor:
-                      type: object
-                      properties:
-                        open:
-                          type: boolean
-                        automatic:
-                          type: boolean
-                    named:
-                      type: boolean
-                    annotations:
-                      type: array
-                      items:
-                        type: object
-                    declaredAnnotations:
-                      type: array
-                      items:
-                        type: object
-                    packages:
-                      uniqueItems: true
-                      type: array
-                      items:
-                        type: string
-                    layer:
-                      type: object
-                definedPackages:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                      annotations:
-                        type: array
-                        items:
-                          type: object
-                      declaredAnnotations:
-                        type: array
-                        items:
-                          type: object
-                      sealed:
-                        type: boolean
-                      specificationTitle:
-                        type: string
-                      specificationVersion:
-                        type: string
-                      specificationVendor:
-                        type: string
-                      implementationTitle:
-                        type: string
-                      implementationVersion:
-                        type: string
-                      implementationVendor:
-                        type: string
-                defaultAssertionStatus:
-                  type: boolean
-                  writeOnly: true
-            unnamedModule:
-              type: object
-              properties:
-                name:
-                  type: string
-                classLoader:
-                  type: object
-                  properties:
-                    name:
-                      type: string
-                    registeredAsParallelCapable:
-                      type: boolean
-                    definedPackages:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                          annotations:
-                            type: array
-                            items:
-                              type: object
-                          declaredAnnotations:
-                            type: array
-                            items:
-                              type: object
-                          sealed:
-                            type: boolean
-                          specificationTitle:
-                            type: string
-                          specificationVersion:
-                            type: string
-                          specificationVendor:
-                            type: string
-                          implementationTitle:
-                            type: string
-                          implementationVersion:
-                            type: string
-                          implementationVendor:
-                            type: string
-                    defaultAssertionStatus:
-                      type: boolean
-                      writeOnly: true
-                descriptor:
-                  type: object
-                  properties:
-                    open:
-                      type: boolean
-                    automatic:
-                      type: boolean
-                named:
-                  type: boolean
-                annotations:
-                  type: array
-                  items:
-                    type: object
-                declaredAnnotations:
-                  type: array
-                  items:
-                    type: object
-                packages:
-                  uniqueItems: true
-                  type: array
-                  items:
-                    type: string
-                layer:
-                  type: object
-            definedPackages:
-              type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    type: string
-                  annotations:
-                    type: array
-                    items:
-                      type: object
-                  declaredAnnotations:
-                    type: array
-                    items:
-                      type: object
-                  sealed:
-                    type: boolean
-                  specificationTitle:
-                    type: string
-                  specificationVersion:
-                    type: string
-                  specificationVendor:
-                    type: string
-                  implementationTitle:
-                    type: string
-                  implementationVersion:
-                    type: string
-                  implementationVendor:
-                    type: string
-            defaultAssertionStatus:
-              type: boolean
-              writeOnly: true
-    AutowireCapableBeanFactory:
-      type: object
-    BeanFactory:
-      type: object
-    Environment:
-      type: object
-      properties:
-        activeProfiles:
-          type: array
-          items:
-            type: string
-        defaultProfiles:
-          type: array
-          items:
-            type: string
-    FilterRegistration:
-      type: object
-      properties:
-        urlPatternMappings:
-          type: array
-          items:
-            type: string
-        servletNameMappings:
-          type: array
-          items:
-            type: string
-        name:
-          type: string
-        className:
-          type: string
-        initParameters:
-          type: object
-          additionalProperties:
-            type: string
-    HttpStatusCode:
-      type: object
-      properties:
-        error:
-          type: boolean
-        is2xxSuccessful:
-          type: boolean
-        is4xxClientError:
-          type: boolean
-        is5xxServerError:
-          type: boolean
-        is1xxInformational:
-          type: boolean
-        is3xxRedirection:
-          type: boolean
-    JspConfigDescriptor:
-      type: object
-      properties:
-        taglibs:
-          type: array
-          items:
-            "$ref": "#/components/schemas/TaglibDescriptor"
-        jspPropertyGroups:
-          type: array
-          items:
-            "$ref": "#/components/schemas/JspPropertyGroupDescriptor"
-    JspPropertyGroupDescriptor:
-      type: object
-      properties:
-        buffer:
-          type: string
-        defaultContentType:
-          type: string
-        urlPatterns:
-          type: array
-          items:
-            type: string
-        isXml:
-          type: string
-        elIgnored:
-          type: string
-        includePreludes:
-          type: array
-          items:
-            type: string
-        includeCodas:
-          type: array
-          items:
-            type: string
-        pageEncoding:
-          type: string
-        trimDirectiveWhitespaces:
-          type: string
-        errorOnUndeclaredNamespace:
-          type: string
-        scriptingInvalid:
-          type: string
-        errorOnELNotFound:
-          type: string
-        deferredSyntaxAllowedAsLiteral:
-          type: string
-    RedirectView:
-      type: object
-      properties:
-        applicationContext:
-          "$ref": "#/components/schemas/ApplicationContext"
-        servletContext:
-          "$ref": "#/components/schemas/ServletContext"
-        contentType:
-          type: string
-        requestContextAttribute:
-          type: string
-        staticAttributes:
-          type: object
-          additionalProperties:
-            type: object
-        exposePathVariables:
-          type: boolean
-        exposeContextBeansAsAttributes:
-          type: boolean
-          writeOnly: true
-        exposedContextBeanNames:
-          type: array
-          writeOnly: true
-          items:
-            type: string
-        beanName:
-          type: string
-        url:
-          type: string
-        contextRelative:
-          type: boolean
-          writeOnly: true
-        http10Compatible:
-          type: boolean
-          writeOnly: true
-        exposeModelAttributes:
-          type: boolean
-          writeOnly: true
-        encodingScheme:
-          type: string
-          writeOnly: true
-        statusCode:
-          "$ref": "#/components/schemas/HttpStatusCode"
-        expandUriTemplateVariables:
-          type: boolean
-          writeOnly: true
-        propagateQueryParams:
-          type: boolean
-          writeOnly: true
-        hosts:
-          type: array
-          items:
-            type: string
-        redirectView:
-          type: boolean
-        propagateQueryProperties:
-          type: boolean
-        attributesMap:
-          type: object
-          additionalProperties:
-            type: object
-        attributesCSV:
-          type: string
-          writeOnly: true
-        attributes:
-          type: object
-          additionalProperties:
-            type: string
-          writeOnly: true
-    ServletContext:
-      type: object
-      properties:
-        classLoader:
-          type: object
-          properties:
-            name:
-              type: string
-            registeredAsParallelCapable:
-              type: boolean
-            definedPackages:
-              type: array
-              items:
-                type: object
-                properties:
-                  name:
-                    type: string
-                  annotations:
-                    type: array
-                    items:
-                      type: object
-                  declaredAnnotations:
-                    type: array
-                    items:
-                      type: object
-                  sealed:
-                    type: boolean
-                  specificationTitle:
-                    type: string
-                  specificationVersion:
-                    type: string
-                  specificationVendor:
-                    type: string
-                  implementationTitle:
-                    type: string
-                  implementationVersion:
-                    type: string
-                  implementationVendor:
-                    type: string
-            defaultAssertionStatus:
-              type: boolean
-              writeOnly: true
-        majorVersion:
-          type: integer
-          format: int32
-        minorVersion:
-          type: integer
-          format: int32
-        attributeNames:
-          type: object
-        initParameterNames:
-          type: object
-        contextPath:
-          type: string
-        virtualServerName:
-          type: string
-        sessionCookieConfig:
-          "$ref": "#/components/schemas/SessionCookieConfig"
-        sessionTrackingModes:
-          uniqueItems: true
-          type: array
-          writeOnly: true
-          items:
-            type: string
-            enum:
-            - COOKIE
-            - URL
-            - SSL
-        sessionTimeout:
-          type: integer
-          format: int32
-        servletRegistrations:
-          type: object
-          additionalProperties:
-            "$ref": "#/components/schemas/ServletRegistration"
-        effectiveMajorVersion:
-          type: integer
-          format: int32
-        filterRegistrations:
-          type: object
-          additionalProperties:
-            "$ref": "#/components/schemas/FilterRegistration"
-        responseCharacterEncoding:
-          type: string
-        requestCharacterEncoding:
-          type: string
-        effectiveSessionTrackingModes:
-          uniqueItems: true
-          type: array
-          items:
-            type: string
-            enum:
-            - COOKIE
-            - URL
-            - SSL
-        servletContextName:
-          type: string
-        effectiveMinorVersion:
-          type: integer
-          format: int32
-        defaultSessionTrackingModes:
-          uniqueItems: true
-          type: array
-          items:
-            type: string
-            enum:
-            - COOKIE
-            - URL
-            - SSL
-        jspConfigDescriptor:
-          "$ref": "#/components/schemas/JspConfigDescriptor"
-        serverInfo:
-          type: string
-    ServletRegistration:
-      type: object
-      properties:
-        mappings:
-          type: array
-          items:
-            type: string
-        runAsRole:
-          type: string
-        name:
-          type: string
-        className:
-          type: string
-        initParameters:
-          type: object
-          additionalProperties:
-            type: string
-    SessionCookieConfig:
-      type: object
-      properties:
-        name:
-          type: string
-        path:
-          type: string
-        attributes:
-          type: object
-          additionalProperties:
-            type: string
-        comment:
-          type: string
-          deprecated: true
-        maxAge:
-          type: integer
-          format: int32
-        secure:
-          type: boolean
-        httpOnly:
-          type: boolean
-        domain:
-          type: string
-    TaglibDescriptor:
-      type: object
-      properties:
-        taglibLocation:
-          type: string
-        taglibURI:
-          type: string
     Animation:
       type: object
       properties:
