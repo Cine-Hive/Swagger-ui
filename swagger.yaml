@@ -9,6 +9,8 @@ servers:
 tags:
 - name: NowPlaying Controller
   description: 현재 상영중인 영화 기능을 제공하는 API
+- name: ReplyBookMark Controller
+  description: 영화 즐겨찾기 관련 기능을 제공하는 API
 - name: Animation Controller
   description: 애니메이션 정보 관련 기능을 제공하는 API
 - name: UpComing Movie Controller
@@ -27,6 +29,8 @@ tags:
   description: 인기 영화 기능을 제공하는 API
 - name: Board Controller
   description: 게시글 CRUD, 검색, 전체 조회 기능을 제공하는 API
+- name: Reply Controller
+  description: 영화에 대한 감상평 작성 관련 기능을 제공하는 API
 - name: TopMovie Controller
   description: 평점 순위 영화 기능을 제공하는 API
 - name: Google User Controller
@@ -43,6 +47,8 @@ tags:
   description: 사용자 관련 기능을 제공하는 API
 - name: Movie Controller
   description: 영화 정보 관련 기능을 제공하는 API
+- name: ReplyJudge Controller
+  description: 좋아요/싫어요 관련 기능을 제공하는 API
 - name: Bookmark Controller
   description: 게시글의 즐겨찾기를 등록, 취소 및 전체 갯수 조회 기능을 제공하는 API
 - name: Comment Controller
@@ -189,7 +195,7 @@ paths:
             "*/*":
               schema:
                 type: object
-  "/report/{boardId}/users/{memEmail}":
+  "/report/{boardId}":
     post:
       tags:
       - Report Controller
@@ -203,11 +209,6 @@ paths:
         schema:
           type: integer
           format: int64
-      - name: memEmail
-        in: path
-        required: true
-        schema:
-          type: string
       requestBody:
         content:
           application/json:
@@ -224,15 +225,13 @@ paths:
   "/reply":
     post:
       tags:
-      - reply-controller
+      - Reply Controller
+      summary: 감상평 등록
+      description: reply 테이블에 새로운 감상평을 등록하고, memnickname, mememail, movieId, content를
+        파라미터로 받아 저장
       operationId: createReply
       parameters:
       - name: memNickname
-        in: query
-        required: true
-        schema:
-          type: string
-      - name: memEmail
         in: query
         required: true
         schema:
@@ -258,14 +257,11 @@ paths:
   "/reply/judge/like":
     post:
       tags:
-      - reply-judge-controller
+      - ReplyJudge Controller
+      summary: 감상평에 좋아요 등록
+      description: reply_likes 테이블에 해당 감상평 추가
       operationId: toggleLike
       parameters:
-      - name: memEmail
-        in: query
-        required: true
-        schema:
-          type: string
       - name: movieId
         in: query
         required: true
@@ -288,14 +284,11 @@ paths:
   "/reply/judge/dislike":
     post:
       tags:
-      - reply-judge-controller
+      - ReplyJudge Controller
+      summary: 감상평에 싫어요 등록
+      description: reply_dislikes 테이블에 해당 감상평 추가
       operationId: toggleDislike
       parameters:
-      - name: memEmail
-        in: query
-        required: true
-        schema:
-          type: string
       - name: movieId
         in: query
         required: true
@@ -318,20 +311,14 @@ paths:
   "/reply/bookmark/toggle":
     post:
       tags:
-      - reply-bookmark-controller
+      - ReplyBookMark Controller
       operationId: toggleBookmark
-      parameters:
-      - name: memEmail
-        in: query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/ReplyDto"
         required: true
-        schema:
-          type: string
-      - name: movieId
-        in: query
-        required: true
-        schema:
-          type: integer
-          format: int64
       responses:
         '200':
           description: OK
@@ -405,7 +392,7 @@ paths:
                 type: object
                 additionalProperties:
                   type: object
-  "/like/{boardId}/users/{memEmail}":
+  "/like/{boardId}":
     post:
       tags:
       - Like Controller
@@ -419,11 +406,6 @@ paths:
         schema:
           type: integer
           format: int64
-      - name: memEmail
-        in: path
-        required: true
-        schema:
-          type: string
       responses:
         '200':
           description: OK
@@ -444,11 +426,6 @@ paths:
         schema:
           type: integer
           format: int64
-      - name: memEmail
-        in: path
-        required: true
-        schema:
-          type: string
       responses:
         '200':
           description: OK
@@ -456,7 +433,7 @@ paths:
             "*/*":
               schema:
                 type: string
-  "/dislike/{boardId}/users/{memEmail}":
+  "/dislike/{boardId}":
     post:
       tags:
       - DisLike Controller
@@ -470,11 +447,6 @@ paths:
         schema:
           type: integer
           format: int64
-      - name: memEmail
-        in: path
-        required: true
-        schema:
-          type: string
       responses:
         '200':
           description: OK
@@ -495,11 +467,6 @@ paths:
         schema:
           type: integer
           format: int64
-      - name: memEmail
-        in: path
-        required: true
-        schema:
-          type: string
       responses:
         '200':
           description: OK
@@ -507,7 +474,7 @@ paths:
             "*/*":
               schema:
                 type: string
-  "/comment/{boardId}/{memEmail}":
+  "/comment/{boardId}":
     post:
       tags:
       - Comment Controller
@@ -521,11 +488,6 @@ paths:
         schema:
           type: integer
           format: int64
-      - name: memEmail
-        in: path
-        required: true
-        schema:
-          type: string
       requestBody:
         content:
           application/json:
@@ -539,7 +501,7 @@ paths:
             "*/*":
               schema:
                 "$ref": "#/components/schemas/CommentDto"
-  "/bookmark/{boardId}/users/{memEmail}":
+  "/bookmark/{boardId}":
     post:
       tags:
       - Bookmark Controller
@@ -553,11 +515,6 @@ paths:
         schema:
           type: integer
           format: int64
-      - name: memEmail
-        in: path
-        required: true
-        schema:
-          type: string
       responses:
         '200':
           description: OK
@@ -578,11 +535,6 @@ paths:
         schema:
           type: integer
           format: int64
-      - name: memEmail
-        in: path
-        required: true
-        schema:
-          type: string
       responses:
         '200':
           description: OK
@@ -733,7 +685,9 @@ paths:
   "/reply/user/{email}":
     get:
       tags:
-      - reply-controller
+      - Reply Controller
+      summary: 특정 사용자의 모든 감상평 조회
+      description: reply 테이블에 등록된 감상평 중 해당 email에 해당하는 모든 감상평을 조회
       operationId: getReplysByMemEmail
       parameters:
       - name: email
@@ -753,7 +707,9 @@ paths:
   "/reply/movie/{movieId}":
     get:
       tags:
-      - reply-controller
+      - Reply Controller
+      summary: '해당 영화에 등록된 감상평 조회 '
+      description: reply 테이블에 있는 감상평 중 해당 movieId에 해당하는 모든 감상평을 조회
       operationId: getReplysByMovie
       parameters:
       - name: movieId
@@ -774,7 +730,9 @@ paths:
   "/reply/judge/count/like":
     get:
       tags:
-      - reply-judge-controller
+      - ReplyJudge Controller
+      summary: 감상평에 등록된 좋아요 카운트
+      description: reply_likes 테이블에 replyId로 조회하여 좋아요 수 반환
       operationId: getLikeCount
       parameters:
       - name: replyId
@@ -794,7 +752,9 @@ paths:
   "/reply/judge/count/dislike":
     get:
       tags:
-      - reply-judge-controller
+      - ReplyJudge Controller
+      summary: 감상평에 등록된 싫어요 카운트
+      description: reply_dislikes 테이블에 replyId로 조회하여 싫어요 수 반환
       operationId: getDisLikeCount
       parameters:
       - name: replyId
@@ -814,7 +774,9 @@ paths:
   "/reply/bookmark/count":
     get:
       tags:
-      - reply-bookmark-controller
+      - ReplyBookMark Controller
+      summary: 해당 영화의 즐겨찾기 수 조회
+      description: reply_bookmark 테이블에 해당 영화의 즐겨찾기 수를 movie_id로 조회
       operationId: getBookmarkCount
       parameters:
       - name: movieId
@@ -912,7 +874,7 @@ paths:
       tags:
       - Like Controller
       summary: 좋아요 갯수 조회
-      description: 특정 게시글에 대해 좋아요의 전체 갯수를 조회
+      description: 특정 게시글에 대해 좋아요의 총 갯수를 조회
       operationId: getLikeCount_1
       parameters:
       - name: boardId
@@ -1042,7 +1004,7 @@ paths:
       - Comment Controller
       summary: 댓글 조회
       description: 특정 게시글의 전채 댓글 수 조회
-      operationId: getCommnetsByBoard
+      operationId: getCommentsByBoard
       parameters:
       - name: boardId
         in: path
@@ -1103,7 +1065,7 @@ paths:
     get:
       tags:
       - Bookmark Controller
-      summary: '즐겨찾기 수 조회 '
+      summary: 즐겨찾기 수 조회
       description: 특정 게시글에 대해 전체 즐겨찾기 수 조회
       operationId: getBookmarkCount_1
       parameters:
@@ -1411,7 +1373,9 @@ paths:
   "/reply/{movieId}/{replyId}":
     delete:
       tags:
-      - reply-controller
+      - Reply Controller
+      summary: 감상평 삭제
+      description: 특정 영화에 등록된 특정 감상평을 삭제
       operationId: deleteReply
       parameters:
       - name: movieId
@@ -1429,6 +1393,10 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            "*/*":
+              schema:
+                type: object
   "/comment/board/{boardId}/delete/{commentId}":
     delete:
       tags:
@@ -1501,6 +1469,8 @@ components:
         id:
           type: integer
           format: int64
+        memEmail:
+          type: string
         brdTitle:
           type: string
         brdContent:
@@ -1657,6 +1627,24 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/LoginHistory"
+    ReplyDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        memEmail:
+          type: string
+        movieId:
+          type: integer
+          format: int64
+        replyContent:
+          type: string
+        memNickname:
+          type: string
+        replyRegDate:
+          type: string
+          format: date-time
     UserDto:
       type: object
       properties:
@@ -1746,6 +1734,14 @@ components:
           format: int64
         posterPath:
           type: string
+        title:
+          type: string
+        releaseDate:
+          type: string
+        genres:
+          type: array
+          items:
+            type: string
     Actor:
       type: object
       properties:
@@ -1835,6 +1831,14 @@ components:
           format: int64
         posterPath:
           type: string
+        title:
+          type: string
+        releaseDate:
+          type: string
+        genres:
+          type: array
+          items:
+            type: string
     TopRatedMovieDto:
       type: object
       properties:
@@ -1843,6 +1847,14 @@ components:
           format: int64
         posterPath:
           type: string
+        title:
+          type: string
+        releaseDate:
+          type: string
+        genres:
+          type: array
+          items:
+            type: string
     PopularMovieDto:
       type: object
       properties:
@@ -1851,6 +1863,14 @@ components:
           format: int64
         posterPath:
           type: string
+        title:
+          type: string
+        releaseDate:
+          type: string
+        genres:
+          type: array
+          items:
+            type: string
     Drama:
       type: object
       properties:
