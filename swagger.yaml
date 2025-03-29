@@ -56,7 +56,7 @@ tags:
 - name: Google User App Controller
   description: 구글 앱 로그인 API 관련 기능을 제공하는 API
 paths:
-  "/comment/board/{boardId}/update/{commentId}":
+  "/comment/{boardId}/board/update/{commentId}":
     put:
       tags:
       - Comment Controller
@@ -90,6 +90,26 @@ paths:
               schema:
                 "$ref": "#/components/schemas/CommentDto"
   "/boards/{id}":
+    get:
+      tags:
+      - Board Controller
+      summary: 게시글 상세 페이지
+      description: 등록한 게시글에 대한 상세 페이지
+      operationId: getDetailBoard
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/BoardDto"
     put:
       tags:
       - Board Controller
@@ -116,6 +136,22 @@ paths:
             "*/*":
               schema:
                 "$ref": "#/components/schemas/Board"
+    delete:
+      tags:
+      - Board Controller
+      summary: 게시글 글 삭제
+      description: 사용자가 등록한 게시글에 대한 삭제
+      operationId: deleteBoard
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
   "/update_upcoming_movie":
     post:
       tags:
@@ -542,7 +578,7 @@ paths:
             "*/*":
               schema:
                 type: string
-  "/boards/create":
+  "/boards":
     post:
       tags:
       - Board Controller
@@ -998,7 +1034,7 @@ paths:
               schema:
                 type: integer
                 format: int32
-  "/comment/all/board/{boardId}":
+  "/comment/{boardId}/board/all":
     get:
       tags:
       - Comment Controller
@@ -1083,22 +1119,6 @@ paths:
               schema:
                 type: integer
                 format: int32
-  "/boards":
-    get:
-      tags:
-      - Board Controller
-      summary: 게시글 리스트 조회
-      description: 사용자들이 등록한 게시글들의 전체 목록을 조회
-      operationId: getBoards
-      responses:
-        '200':
-          description: OK
-          content:
-            "*/*":
-              schema:
-                type: array
-                items:
-                  "$ref": "#/components/schemas/GetListBoardDto"
   "/boards/search":
     get:
       tags:
@@ -1121,27 +1141,22 @@ paths:
                 type: array
                 items:
                   "$ref": "#/components/schemas/BoardSearchDto"
-  "/boards/detail/{id}":
+  "/boards/all":
     get:
       tags:
       - Board Controller
-      summary: 게시글 상세 페이지
-      description: 등록한 게시글에 대한 상세 페이지
-      operationId: getDetailBoard
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int64
+      summary: 게시글 리스트 조회
+      description: 사용자들이 등록한 게시글들의 전체 목록을 조회
+      operationId: getBoards
       responses:
         '200':
           description: OK
           content:
             "*/*":
               schema:
-                "$ref": "#/components/schemas/BoardDto"
+                type: array
+                items:
+                  "$ref": "#/components/schemas/GetListBoardDto"
   "/api/auth/naver":
     get:
       tags:
@@ -1397,7 +1412,7 @@ paths:
             "*/*":
               schema:
                 type: object
-  "/comment/board/{boardId}/delete/{commentId}":
+  "/comment/{boardId}/board/delete/{commentId}":
     delete:
       tags:
       - Comment Controller
@@ -1412,23 +1427,6 @@ paths:
           type: integer
           format: int64
       - name: commentId
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int64
-      responses:
-        '200':
-          description: OK
-  "/boards/delete/{id}":
-    delete:
-      tags:
-      - Board Controller
-      summary: 게시글 글 삭제
-      description: 사용자가 등록한 게시글에 대한 삭제
-      operationId: deleteBoard
-      parameters:
-      - name: id
         in: path
         required: true
         schema:
@@ -1905,48 +1903,6 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/Actor"
-    GetListBoardDto:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        brdTitle:
-          type: string
-        brdContent:
-          type: string
-        memNickname:
-          type: string
-        brgRegDate:
-          type: string
-          format: date-time
-        likeCount:
-          type: integer
-          format: int32
-        views:
-          type: integer
-          format: int32
-    BoardSearchDto:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        brgRedDate:
-          type: string
-          format: date-time
-        likeCount:
-          type: integer
-          format: int32
-        views:
-          type: integer
-          format: int32
-        brdTitle:
-          type: string
-        brdContent:
-          type: string
-        memNickname:
-          type: string
     BoardDto:
       type: object
       properties:
@@ -1983,6 +1939,48 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/CommentDto"
+        views:
+          type: integer
+          format: int32
+    BoardSearchDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        brgRedDate:
+          type: string
+          format: date-time
+        likeCount:
+          type: integer
+          format: int32
+        views:
+          type: integer
+          format: int32
+        brdTitle:
+          type: string
+        brdContent:
+          type: string
+        memNickname:
+          type: string
+    GetListBoardDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        brdTitle:
+          type: string
+        brdContent:
+          type: string
+        memNickname:
+          type: string
+        brdRegDate:
+          type: string
+          format: date-time
+        likeCount:
+          type: integer
+          format: int32
         views:
           type: integer
           format: int32
