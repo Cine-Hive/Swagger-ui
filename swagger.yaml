@@ -56,7 +56,7 @@ tags:
 - name: Google User App Controller
   description: 구글 앱 로그인 API 관련 기능을 제공하는 API
 paths:
-  "/comment/{boardId}/board/update/{commentId}":
+  "/comment/{boardId}/board/{commentId}":
     put:
       tags:
       - Comment Controller
@@ -89,6 +89,28 @@ paths:
             "*/*":
               schema:
                 "$ref": "#/components/schemas/CommentDto"
+    delete:
+      tags:
+      - Comment Controller
+      summary: 댓글 삭제
+      description: 사용자가 등록한 특정 게시글의 댓글을 삭제
+      operationId: deleteComment
+      parameters:
+      - name: boardId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: commentId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
   "/boards/{id}":
     get:
       tags:
@@ -1412,29 +1434,6 @@ paths:
             "*/*":
               schema:
                 type: object
-  "/comment/{boardId}/board/delete/{commentId}":
-    delete:
-      tags:
-      - Comment Controller
-      summary: 댓글 삭제
-      description: 사용자가 등록한 특정 게시글의 댓글을 삭제
-      operationId: deleteComment
-      parameters:
-      - name: boardId
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int64
-      - name: commentId
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int64
-      responses:
-        '200':
-          description: OK
 components:
   schemas:
     CommentDto:
