@@ -1179,27 +1179,6 @@ paths:
                 type: array
                 items:
                   "$ref": "#/components/schemas/GetListBoardDto"
-  "/api/ott/{providerId}":
-    get:
-      tags:
-      - ott-controller
-      operationId: getMoviesByProvider
-      parameters:
-      - name: providerId
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int32
-      responses:
-        '200':
-          description: OK
-          content:
-            "*/*":
-              schema:
-                type: array
-                items:
-                  "$ref": "#/components/schemas/OttDto"
   "/api/auth/naver":
     get:
       tags:
@@ -1937,7 +1916,7 @@ components:
           type: string
         memEmail:
           type: string
-        brgRedDate:
+        brdRegDate:
           type: string
           format: date-time
         bookmarkCount:
@@ -1968,7 +1947,7 @@ components:
         id:
           type: integer
           format: int64
-        brgRedDate:
+        brdRegDate:
           type: string
           format: date-time
         likeCount:
@@ -2004,34 +1983,6 @@ components:
         views:
           type: integer
           format: int32
-    OttDto:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        title:
-          type: string
-        overview:
-          type: string
-        posterPath:
-          type: string
-        popularity:
-          type: number
-          format: double
-        releaseDate:
-          type: string
-          format: date
-        provider:
-          "$ref": "#/components/schemas/ProviderDto"
-    ProviderDto:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int32
-        name:
-          type: string
     Animation:
       type: object
       properties:
